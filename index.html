@@ -195,7 +195,7 @@ const app=initializeApp({apiKey:"AIzaSyA3GseZ9QJ0X4r2L0phJqh-NCZZI-HrHPA",authDo
 const db=getDatabase(app);
 const ROOM="rooms/court", R=p=>ref(db,ROOM+(p?"/"+p:""));
 const HOST=new URLSearchParams(location.search).has("beamer");
-const T_ARGS=240,T_PLEA=90,T_Q=40;
+const T_ARGS=240,T_PLEA=60,T_REB=45,T_Q=40;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -361,10 +361,10 @@ function renderPhone(){
  if(ph==="charge") return mount("charge"+c,`<div class="ph">${top(`<span class="tag on">Case ${c+1}</span>`)}<p class="note">${esc(K.title)} · ${esc(K.work)}</p>${roleCard(p,K)}<p class="note">Keep your role to yourself. You argue your role – not your own opinion.</p></div>`);
  if(ph==="args"||ph==="plea"){
   const act=activeSides(st);
-  const speak=ph==="plea"?`<div class="speak ${st.sub}"><span>${st.sub==="q"?"Jury question – answer":(st.sub==="pros"?"The prosecution pleads":"The defence pleads")}</span><span data-end="1">--:--</span></div>`:"";
+  const speak=ph==="plea"?`<div class="speak ${st.sub}"><span>${st.sub==="q"?"Jury question – answer":(st.sub==="pros"?"The prosecution "+(st.rnd===2?"rebuts":"pleads"):"The defence "+(st.rnd===2?"rebuts":"pleads"))}</span><span data-end="1">--:--</span></div>`:"";
   if(p.role==="jury"){mount("jq"+ph+c+(st.sub||""),`<div class="ph">${top(timer)}${speak}<div class="doc"><span class="lbl">JURY · QUESTIONS TO THE PARTIES</span><p>Send sharp questions. The court picks the best one for the parties.</p><textarea id="ta" class="inp" maxlength="160" placeholder="Your question to the prosecution or the defence…"></textarea><button class="btn" id="post">Hand question to the clerk</button><div id="list" class="dcol"></div></div>${rc}</div>`,bindQ);return listQ()}
   if(ph==="plea"){
-   mount("pl"+c+st.sub+(dos(c)?1:0),`<div class="ph">${top(timer)}${speak}<div id="floor"></div><p class="note">Your side's strongest points – speaker notes:</p>${dossierHTML(c,p.role)}${rc}</div>`,()=>{$("#floor").onclick=e=>{const b=e.target.closest("[data-fl]");if(!b)return;if(b.dataset.fl==="take")update(R("state"),{speaker:{cid,name:p.name,side:p.role}});else update(R("state"),{speaker:null})}});
+   mount("pl"+c+st.sub+(st.rnd||1)+(dos(c)?1:0),`<div class="ph">${top(timer)}${speak}<div id="floor"></div><p class="note">Your side's strongest points – speaker notes:</p>${dossierHTML(c,p.role)}${rc}</div>`,()=>{$("#floor").onclick=e=>{const b=e.target.closest("[data-fl]");if(!b)return;if(b.dataset.fl==="take")update(R("state"),{speaker:{cid,name:p.name,side:p.role}});else update(R("state"),{speaker:null})}});
    const sp=st.speaker,mine=act.includes(p.role);
    setH("floor",mine?(sp?(sp.cid===cid?`<div class="doc"><span class="lbl">YOU HAVE THE FLOOR</span><h2>Your name is lit up in the courtroom.</h2><button class="btn ghost" data-fl="yield">Yield the floor</button></div>`:`<div class="doc"><span class="lbl">ON THE FLOOR</span><h2>${esc(sp.name)}</h2><p class="note">speaks for your side.</p></div>`):`<button class="btn brass" data-fl="take">Take the floor · 发言</button>`):`<div class="doc"><span class="lbl">LISTEN</span><p>${sp?esc(sp.name)+" has the floor.":"The other side speaks now."}</p></div>`);
    return;
@@ -430,7 +430,7 @@ function renderHost(){
  hostEffects();
  const st=S.state||{phase:"lobby"},c=st.case||0,K=CASES[c],P=S.players||{},ph=st.phase;
  const wide=["dossier","verdict","finale","closing"].includes(ph);
- const k="h-"+ph+"-"+c+"-"+(st.sub||"")+"-"+(+st.rev||0)+"-"+IMGS.map(x=>x?1:0).join("");
+ const k="h-"+ph+"-"+c+"-"+(st.sub||"")+(st.rnd||"")+"-"+(+st.rev||0)+"-"+IMGS.map(x=>x?1:0).join("");
  mount(k,`<div class="bm"><header class="hdr"><div class="crest">法</div><div><b>模拟法庭 · Mock Trial</b><span>${ph==="lobby"?"Art of Resistance · Pop Culture in China":esc(caseNo(c))+" · "+esc(K.title)}</span></div><div class="sp"></div><span class="small" id="aist">${aiStatus}</span></header>
   <main class="hall ${wide?"wide":""}"><section class="court"><div class="wall"><div class="screen" id="exh">${IMGS[c]&&ph!=="lobby"?`<img alt="${esc(K.work)}" src="${IMGS[c]}">`:`<div class="ex"><i>EXHIBIT A</i>${esc(K.work)}</div>`}</div><div class="bench" id="bench"><div class="emb">法</div><b>Presiding Judge</b><div class="btxt" id="btxt"></div><div class="envl" id="envl"></div></div><div class="clock"><span id="clk" data-end="1">–</span></div></div>
   <div class="floor"><div class="tbl pros" id="tP"></div><div class="dock">${CHAIR}<b>${esc(K.accused)}</b><span>Defendant · absent</span></div><div class="tbl def" id="tD"></div><div class="jury" id="jb"></div><div class="gal" id="gal"></div></div><div class="plate" id="plate"></div></section>
@@ -447,7 +447,7 @@ function renderHost(){
  $("#jb").classList.toggle("lit",(ph==="plea"&&st.sub==="q")||["vopen","guess","finale"].includes(ph));
  const all=Object.keys(P);
  setH("gal",ph==="lobby"?`<h3>Public gallery <span class="cn">旁听席</span></h3><div class="names">${all.map(id=>`<span>${esc(P[id].name)}</span>`).join(" · ")||"<span>empty</span>"}</div>`:`<h3>Public gallery <span class="cn">旁听席</span></h3><div class="dots">${all.map(()=>"<i></i>").join("")}</div>`);
- const BT={lobby:"The court will open shortly.",charge:"The indictment is read.",args:"Recess. The parties prepare.",dossier:"The clerk reads the file.",plea:st.sub==="q"?"A question from the jury.":"The court hears the plea.",vopen:"The jury votes in public.",vsecret:"Secret ballot.",verdict:+st.rev>=2?"The verdict was written before the trial.":st.rev?"The court has ruled.":"All rise.",guess:"Who informed?",finale:"Court adjourned.",closing:"The floor is open."};
+ const BT={lobby:"The court will open shortly.",charge:"The indictment is read.",args:"Recess. The parties prepare.",dossier:"The clerk reads the file.",plea:st.sub==="q"?"A question from the jury.":st.rnd===2?"Rebuttal.":"The court hears the plea.",vopen:"The jury votes in public.",vsecret:"Secret ballot.",verdict:+st.rev>=2?"The verdict was written before the trial.":st.rev?"The court has ruled.":"All rise.",guess:"Who informed?",finale:"Court adjourned.",closing:"The floor is open."};
  setH("btxt",esc(BT[ph]||""));
  const sd=(S.sealed||{})[c];setH("envl",ph!=="lobby"&&sd?(ph==="verdict"&&+st.rev>=2?`<span>✉ Sealed instruction · opened</span>`:`<span>✉ 密封 Sealed instruction</span>`):"");
  $("#bench").classList.toggle("lit",["charge","dossier","verdict"].includes(ph));
@@ -470,7 +470,7 @@ function recordHTML(st,c,K,P){
  if(ph==="charge") return `<div class="seal">人民<br>法院</div>${head}<span class="no">INDICTMENT · 起诉书</span><h1>${esc(K.title)}</h1><p><b>Exhibit A:</b> ${esc(K.work)}. ${esc(K.desc)}</p>${K.charges.map(x=>`<div class="chg"><b>${esc(x[0])}</b><span>${esc(x[1])}</span></div>`).join("")}<p class="src">Your role is on your phone.</p>`;
  if(ph==="args"){const A=argsOf(c);return `${head}<span class="no">RECESS · 休庭</span><h1>The parties file their arguments.</h1><p>Four minutes. Prosecution and defence write on their phones; the jury drafts questions.</p><div class="tally"><div><span class="num p">${A.filter(a=>a.side==="pros").length}</span><span class="src">prosecution</span></div><div><span class="num d">${A.filter(a=>a.side==="def").length}</span><span class="src">defence</span></div><div><span class="num j">${Object.keys((S.qs||{})[c]||{}).length}</span><span class="src">jury questions</span></div></div>`}
  if(ph==="dossier"){const d=dos(c);if(!d)return `${head}<span class="no">THE COURT FILE · 案卷</span><h1>The clerk is reading the files…</h1>`;return `${head}<span class="no">THE COURT FILE · 案卷 · STRONGEST POINTS, SCORED 1–10</span><div class="two">${["pros","def"].map(s=>`<div class="dcol"><span class="colh ${s==="pros"?"p":"d"}">${s==="pros"?"Prosecution":"Defence"}</span>${(d[s]||[]).map(x=>`<div class="pt ${s}"><span class="sc">${x.s!=null?x.s:"▲"}</span><span>${esc(x.t)}</span></div>`).join("")||`<p class="src">No arguments filed.</p>`}</div>`).join("")}</div>${d.note?`<p class="clerk">${esc(d.note)}</p>`:""}<p class="src">${esc(d.src||"")}</p>`}
- if(ph==="plea"){const q=(S.q||{})[c],d=dos(c)||{},sub=st.sub||"pros";if(sub==="q")return `${head}<span class="no">QUESTION FROM THE JURY</span><p class="qbig">${q?"“"+esc(q.text)+"”":"The court is choosing the best question…"}</p>${q&&!q.judge?`<p class="src">To be answered by: ${esc(q.to)}</p>`:""}`;return `${head}<span class="no">PLEA · 90 SECONDS</span><h1>${sub==="pros"?"The prosecution":"The defence"} has the floor.</h1><p class="src">From the court file:</p>${(d[sub]||[]).map(x=>`<div class="pt ${sub}"><span class="sc">${x.s!=null?x.s:"▲"}</span><span>${esc(x.t)}</span></div>`).join("")}`}
+ if(ph==="plea"){const q=(S.q||{})[c],d=dos(c)||{},sub=st.sub||"pros";if(sub==="q")return `${head}<span class="no">QUESTION FROM THE JURY</span><p class="qbig">${q?"“"+esc(q.text)+"”":"The court is choosing the best question…"}</p>${q&&!q.judge?`<p class="src">To be answered by: ${esc(q.to)}</p>`:""}`;return `${head}<span class="no">${st.rnd===2?`ROUND 2 · REBUTTAL · ${T_REB} SECONDS`:`ROUND 1 · PLEA · ${T_PLEA} SECONDS`}</span><h1>${sub==="pros"?"The prosecution":"The defence"} ${st.rnd===2?"answers back.":"has the floor."}</h1><p class="src">From the court file:</p>${(d[sub]||[]).map(x=>`<div class="pt ${sub}"><span class="sc">${x.s!=null?x.s:"▲"}</span><span>${esc(x.t)}</span></div>`).join("")}`}
  if(ph==="vopen"){const t=tally("vopen",c),J=Object.keys(P).filter(id=>P[id].role==="jury").length;return `${head}<span class="no">OPEN VOTE · 公开表决</span><h1>Guilty or not guilty?</h1><p>The jury votes in public. Every vote lights up in the jury box.</p><div class="tally"><div><span class="num p">${t.g}</span><span class="src">guilty</span></div><div><span class="num d">${t.n-t.g}</span><span class="src">not guilty</span></div><div><span class="num j">${Math.max(0,J-t.n)}</span><span class="src">undecided</span></div></div>`}
  if(ph==="vsecret")return `${head}<span class="no">SECRET BALLOT · 无记名投票</span><h1>Forget your role.</h1><p>Now everyone votes as themselves – anonymously.</p><div class="tally"><div><span class="num">${tally("vsecret",c).n}</span><span class="src">of ${Object.keys(P).length} ballots cast</span></div></div>`;
  if(ph==="verdict"){const v=(S.verdict||{})[c],o=tally("vopen",c),s=tally("vsecret",c);
@@ -493,7 +493,7 @@ function ctrl(){
  if(ph==="charge")m+=b("next","Recess: file arguments (4 min) ▶",1);
  if(ph==="args")m+=b("plus","+30 s")+b("next","Close the files ▶",1);
  if(ph==="dossier")m+=b("next","Prosecution pleads ▶",1);
- if(ph==="plea")m+=b("plus","+30 s")+b("clear","Clear speaker")+b("next",st.sub==="pros"?"Defence pleads ▶":st.sub==="def"?"Jury question ▶":"Open vote ▶",1);
+ if(ph==="plea")m+=b("plus","+30 s")+b("clear","Clear speaker")+b("next",st.sub==="pros"?(st.rnd===2?"Defence rebuts ▶":"Defence pleads ▶"):st.sub==="def"?(st.rnd===2?"Jury question ▶":"Prosecution rebuts ▶"):"Open vote ▶",1);
  if(ph==="vopen")m+=b("next","Secret ballot ▶",1);
  if(ph==="vsecret")m+=b("next","Show the votes ▶",1);
  if(ph==="verdict"){const r=+st.rev||0;m+=r===0?b("next","Judgment ▶",1):r===1?b("next","Open the sealed envelope ▶",1):b("next","Who was the informant? ▶",1)}
@@ -509,8 +509,8 @@ async function act(a,el){
   if(ph==="lobby"){assignInformants();set(R("sealed/0"),{t:now(),v:"Guilty"});return u({phase:"charge",case:0,rev:0,sub:null,speaker:null})}
   if(ph==="charge")return u({phase:"args",endsAt:now()+T_ARGS*1000});
   if(ph==="args")return u({phase:"dossier"});
-  if(ph==="dossier")return u({phase:"plea",sub:"pros",speaker:null,endsAt:now()+T_PLEA*1000});
-  if(ph==="plea"){if(st.sub==="pros")return u({sub:"def",speaker:null,endsAt:now()+T_PLEA*1000});if(st.sub==="def")return u({sub:"q",speaker:null,endsAt:now()+T_Q*1000});return u({phase:"vopen",sub:null,speaker:null})}
+  if(ph==="dossier")return u({phase:"plea",sub:"pros",rnd:1,speaker:null,endsAt:now()+T_PLEA*1000});
+  if(ph==="plea"){const r2=st.rnd===2;if(st.sub==="pros")return u({sub:"def",speaker:null,endsAt:now()+(r2?T_REB:T_PLEA)*1000});if(st.sub==="def"&&!r2)return u({sub:"pros",rnd:2,speaker:null,endsAt:now()+T_REB*1000});if(st.sub==="def")return u({sub:"q",speaker:null,endsAt:now()+T_Q*1000});return u({phase:"vopen",sub:null,speaker:null})}
   if(ph==="vopen")return u({phase:"vsecret"});
   if(ph==="vsecret")return u({phase:"verdict",rev:false});
   if(ph==="verdict"){const r=+st.rev||0;return r>=2?u({phase:"guess"}):u({rev:r+1})}
@@ -523,7 +523,7 @@ async function act(a,el){
  if(a==="clear")return u({speaker:null});
  if(a==="prev"){
   if(ph==="charge")return c===1?u({phase:"verdict",case:0,rev:2}):u({phase:"lobby"});
-  if(ph==="plea"&&st.sub!=="pros")return u({sub:st.sub==="q"?"def":"pros",speaker:null,endsAt:now()+T_PLEA*1000});
+  if(ph==="plea"&&!(st.sub==="pros"&&st.rnd!==2)){const r2=st.rnd===2;const t=st.sub==="q"?{sub:"def",rnd:2}:st.sub==="def"?{sub:"pros",rnd:r2?2:1}:{sub:"def",rnd:1};return u({...t,speaker:null,endsAt:now()+(t.rnd===2?T_REB:T_PLEA)*1000})}
   if(ph==="verdict"&&+st.rev)return u({rev:(+st.rev)-1});
   if(ph==="vopen")return u({phase:"plea",sub:"q",speaker:null});
   if(ph==="guess")return u({phase:"verdict",rev:2});
@@ -541,7 +541,7 @@ if(HOST) addEventListener("keydown",e=>{
  if(e.key===" "||e.key==="ArrowRight"){e.preventDefault();if(st.phase!=="closing")act("next")}
  if(e.key==="ArrowLeft")act("prev");
 });
-setInterval(()=>{const st=S.state||{};$$("[data-end]").forEach(el=>{if(HOST&&!["args","plea"].includes(st.phase))return;const left=(st.endsAt||0)-now();el.textContent=fmt(left);el.classList.toggle("low",left<15000)})},250);
+let autoK="";setInterval(()=>{const st=S.state||{};if(HOST&&st.phase==="plea"&&(st.sub==="pros"||st.sub==="def")&&st.endsAt&&now()-st.endsAt>1500){const k=st.sub+(st.rnd||1)+st.endsAt;if(k!==autoK){autoK=k;act("next")}}$$("[data-end]").forEach(el=>{if(HOST&&!["args","plea"].includes(st.phase))return;const left=(st.endsAt||0)-now();el.textContent=fmt(left);el.classList.toggle("low",left<15000)})},250);
 onValue(R(),s=>{
  S=s.val()||{};
  if(!S.state&&HOST) set(R("state"),{phase:"lobby",case:0});
