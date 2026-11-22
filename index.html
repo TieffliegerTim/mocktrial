@@ -262,10 +262,14 @@ async function getModel(){
  return aiBusy;
 }
 async function aiJSON(prompt){
- const md=await getModel(); if(!md) return null;
- for(let k=0;k<3;k++){
-  try{const r=await tmo(md.generateContent(prompt),45000);return JSON.parse(r.response.text().trim().replace(/^```(json)?|```$/g,""))}
-  catch(e){console.warn("[court] ai",e.message);if(/429|quota|exhaust|timeout|503/i.test(e.message))await sleep(5000*(k+1));else return null}
+ const md0=await getModel(); if(!md0) return null;
+ let mods=[md0];
+ try{const m=await import("https://www.gstatic.com/firebasejs/12.0.0/firebase-ai.js");const ai=m.getAI(app,{backend:new m.GoogleAIBackend()});mods=mods.concat(MODELS.filter(n=>n!==md0._n).map(n=>{const x=m.getGenerativeModel(ai,{model:n,generationConfig:{responseMimeType:"application/json",temperature:.3}});x._n=n;return x}))}catch(e){}
+ for(const md of mods){
+  for(let k=0;k<2;k++){
+   try{const r=await tmo(md.generateContent(prompt),45000);return JSON.parse(r.response.text().trim().replace(/^```(json)?|```$/g,""))}
+   catch(e){console.warn("[court] ai",md._n,e.message);if(/429|500|503|quota|exhaust|timeout|demand|overload|unavailable|internal/i.test(e.message)){await sleep(2500*(k+1));continue}break}
+  }
  }
  return null;
 }
