@@ -423,7 +423,7 @@ function renderHost(){
  hostEffects();
  const st=S.state||{phase:"lobby"},c=st.case||0,K=CASES[c],P=S.players||{},ph=st.phase;
  const wide=["dossier","verdict","finale"].includes(ph);
- const k="h-"+ph+"-"+c+"-"+(st.sub||"")+"-"+(st.rev?1:0)+"-"+IMGS.map(x=>x?1:0).join("");
+ const k="h-"+ph+"-"+c+"-"+(st.sub||"")+"-"+(+st.rev||0)+"-"+IMGS.map(x=>x?1:0).join("");
  mount(k,`<div class="bm"><header class="hdr"><div class="crest">法</div><div><b>模拟法庭 · Mock Trial</b><span>${ph==="lobby"?"Art of Resistance · Pop Culture in China":esc(caseNo(c))+" · "+esc(K.title)}</span></div><div class="sp"></div><span class="small" id="aist">${aiStatus}</span></header>
   <main class="hall ${wide?"wide":""}"><section class="court"><div class="wall"><div class="screen" id="exh">${IMGS[c]&&ph!=="lobby"?`<img alt="${esc(K.work)}" src="${IMGS[c]}">`:`<div class="ex"><i>EXHIBIT A</i>${esc(K.work)}</div>`}</div><div class="bench" id="bench"><div class="emb">法</div><b>Presiding Judge</b><div class="btxt" id="btxt"></div><div class="envl" id="envl"></div></div><div class="clock"><span id="clk" data-end="1">–</span></div></div>
   <div class="floor"><div class="tbl pros" id="tP"></div><div class="dock">${CHAIR}<b>${esc(K.accused)}</b><span>Defendant · absent</span></div><div class="tbl def" id="tD"></div><div class="jury" id="jb"></div><div class="gal" id="gal"></div></div><div class="plate" id="plate"></div></section>
@@ -440,7 +440,7 @@ function renderHost(){
  $("#jb").classList.toggle("lit",(ph==="plea"&&st.sub==="q")||["vopen","guess","finale"].includes(ph));
  const all=Object.keys(P);
  setH("gal",ph==="lobby"?`<h3>Public gallery <span class="cn">旁听席</span></h3><div class="names">${all.map(id=>`<span>${esc(P[id].name)}</span>`).join(" · ")||"<span>empty</span>"}</div>`:`<h3>Public gallery <span class="cn">旁听席</span></h3><div class="dots">${all.map(()=>"<i></i>").join("")}</div>`);
- const BT={lobby:"The court will open shortly.",charge:"The indictment is read.",args:"Recess. The parties prepare.",dossier:"The clerk reads the file.",plea:st.sub==="q"?"A question from the jury.":"The court hears the plea.",vopen:"The jury votes in public.",vsecret:"Secret ballot.",verdict:st.rev?"The court has ruled.":"All rise.",guess:"Who informed?",finale:"Court adjourned."};
+ const BT={lobby:"The court will open shortly.",charge:"The indictment is read.",args:"Recess. The parties prepare.",dossier:"The clerk reads the file.",plea:st.sub==="q"?"A question from the jury.":"The court hears the plea.",vopen:"The jury votes in public.",vsecret:"Secret ballot.",verdict:+st.rev>=2?"The verdict was written before the trial.":st.rev?"The court has ruled.":"All rise.",guess:"Who informed?",finale:"Court adjourned."};
  setH("btxt",esc(BT[ph]||""));
  const sd=(S.sealed||{})[c];setH("envl",ph!=="lobby"&&sd?(ph==="verdict"&&+st.rev>=2?`<span>✉ Sealed instruction · opened</span>`:`<span>✉ 密封 Sealed instruction</span>`):"");
  $("#bench").classList.toggle("lit",["charge","dossier","verdict"].includes(ph));
