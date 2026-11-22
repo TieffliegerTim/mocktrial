@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#140d08">
+<title>Mock Trial · 模拟法庭</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Inter:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;900&display=swap" rel="stylesheet">
+<style>
+:root{--wall:#140d08;--wood:#4a2e1b;--wood2:#6e4529;--woodd:#2c1b10;--brass:#c9a45c;--brass2:#e9d08e;--paper:#f2e9d6;--paper2:#e8dcc2;--ink:#21180f;--ox:#a3312a;--oxg:#ff7a66;--navy:#2c5288;--navg:#86b6ff;--jur:#b08d2c;--jurg:#f0d27a;--mute:#a89a86}
+*{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--wall);color:#efe5d3;font:16px/1.45 Inter,system-ui,sans-serif;overflow-x:clip}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+p{margin:0}h1,h2,h3{margin:0}
+.serif{font-family:"EB Garamond",Georgia,serif}
+.cn{font-family:"Noto Serif SC",serif;font-weight:900}
+.small{font-size:14px;color:var(--mute)}
+.crest{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,var(--brass2),var(--brass) 55%,#8c6c2c);color:#3a230f;font-family:"Noto Serif SC";font-weight:900;font-size:20px;box-shadow:0 2px 0 #0006,inset 0 -2px 0 #0003;flex:none}
+.ph{max-width:520px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;gap:14px;padding:max(14px,env(safe-area-inset-top)) 14px max(18px,env(safe-area-inset-bottom));background:radial-gradient(600px 300px at 50% -10%,#3a2414,transparent 70%)}
+.top{display:flex;align-items:center;gap:10px}
+.top b{font-family:"EB Garamond";font-size:20px;line-height:1}
+.top .sp{flex:1}
+.tag{font-size:13px;padding:5px 11px;border-radius:99px;background:#2a1b10;border:1px solid #4a3220;white-space:nowrap;color:#e8dcc6}
+.tag.on{background:var(--ox);border-color:var(--ox);color:#fff}
+.doc{background:var(--paper);color:var(--ink);border-radius:6px;padding:20px 20px 22px;box-shadow:0 14px 34px #000a;position:relative;display:flex;flex-direction:column;gap:12px}
+.doc::before{content:"";position:absolute;inset:6px;border:1px solid #c9b994;border-radius:3px;pointer-events:none}
+.doc h1{font-family:"EB Garamond";font-size:34px;line-height:1.02;font-weight:800}
+.doc h2{font-family:"EB Garamond";font-size:26px;line-height:1.05;font-weight:800}
+.doc .lbl{font:600 12px Inter;letter-spacing:.02em;color:#7a6a52}
+.doc p{font-size:16px;line-height:1.45}
+.seal{position:absolute;right:16px;top:14px;width:70px;height:70px;border-radius:50%;border:3px solid #b3241c;color:#b3241c;display:grid;place-items:center;text-align:center;font-family:"Noto Serif SC";font-weight:900;font-size:15px;line-height:1.05;transform:rotate(-12deg);opacity:.85}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;color:#7a6a52}
+.inp{width:100%;height:50px;border-radius:6px;border:1px solid #c9b994;background:#fffaf0;color:var(--ink);padding:0 14px;font-size:16px;outline:none}
+textarea.inp{height:auto;min-height:96px;padding:12px 14px;resize:vertical;line-height:1.4}
+.inp:focus{border-color:var(--ox);box-shadow:0 0 0 3px #a3312a22}
+.btn{height:54px;border-radius:6px;background:var(--ox);color:#fff;font-weight:700;font-size:17px;display:flex;align-items:center;justify-content:center;width:100%;box-shadow:0 3px 0 #5c1712}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #5c1712}
+.btn.brass{background:linear-gradient(var(--brass2),var(--brass));color:#2a1a0c;box-shadow:0 3px 0 #7a5a24}
+.btn.ghost{background:#e5d8bc;color:var(--ink);box-shadow:0 3px 0 #b9a77f}
+.wait{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;flex:1;justify-content:center}
+.gavel{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,var(--brass2),var(--brass) 55%,#8c6c2c);color:#3a230f;font-family:"Noto Serif SC";font-weight:900;font-size:46px;box-shadow:0 8px 24px #0009}
+.wait h2{font-family:"EB Garamond";font-size:30px}
+.role{border-radius:6px;padding:18px;display:flex;flex-direction:column;gap:10px;color:#fff;position:relative;overflow:hidden}
+.role.pros{background:linear-gradient(160deg,#7c241f,#3d110e)}
+.role.def{background:linear-gradient(160deg,#284d84,#11243f)}
+.role.jury{background:linear-gradient(160deg,#7a6320,#3a2e0e)}
+.role .big{display:flex;align-items:baseline;gap:12px}
+.role .big .cn{font-size:30px}
+.role .big b{font-family:"EB Garamond";font-size:32px;font-weight:800}
+.hint{background:#ffffff1c;border-radius:5px;padding:10px 12px;font-size:14px;line-height:1.4}
+.hl{font-size:12px;font-weight:600;color:#ffffffb0}
+.secret{background:#0b0807;color:#f1e4cf;border:2px dashed var(--oxg);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.secret b{color:var(--oxg)}
+details.rc{border-radius:6px;background:#22160d;border:1px solid #3e2a1a;padding:11px 13px}
+details.rc summary{cursor:pointer;font-weight:600;font-size:14px;color:#e8dcc6}
+details.rc[open] summary{margin-bottom:10px}
+.arg{display:flex;gap:10px;align-items:flex-start;background:#fffaf0;border:1px solid #d9caa8;border-radius:5px;padding:10px 12px;color:var(--ink)}
+.arg p{flex:1;font-size:15px;line-height:1.4;overflow-wrap:anywhere}
+.up{flex:none;min-width:58px;height:42px;border-radius:5px;border:1px solid #c9b994;background:#efe4cb;font-weight:700;color:var(--ink)}
+.up.on{background:var(--ox);color:#fff;border-color:var(--ox)}
+.mine{flex:none;font-size:12px;color:#7a6a52;padding-top:4px}
+.speak{border-radius:6px;padding:13px 15px;font-weight:700;font-size:17px;display:flex;justify-content:space-between;gap:10px;color:#fff;background:#3a2414;border:1px solid #5a3c24}
+.speak.pros{background:var(--ox)}.speak.def{background:var(--navy)}.speak.q{background:var(--jur)}
+.vbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.vb{height:92px;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-weight:700;font-size:17px;background:#fffaf0;color:var(--ink);border:2px solid #d9caa8}
+.vb .cn{font-size:26px}
+.vb.g.on{background:var(--ox);border-color:var(--ox);color:#fff}
+.vb.n.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.dcol{display:flex;flex-direction:column;gap:8px}
+.dpt{border-radius:5px;padding:10px 12px;font-size:14px;line-height:1.4;display:flex;gap:10px;color:#fff}
+.dpt b{font-family:"EB Garamond";font-size:20px;flex:none;line-height:1}
+.dpt.pros{background:#6e221d}.dpt.def{background:#23406b}
+.gl{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gb{min-height:52px;border-radius:5px;border:2px solid #d9caa8;background:#fffaf0;color:var(--ink);font-weight:600;padding:6px 10px}
+.gb.on{border-color:var(--ox);background:var(--ox);color:#fff}
+.note{font-size:13px;color:var(--mute)}
+.doc .note{color:#7a6a52}
+.bm{min-height:100dvh;display:grid;grid-template-rows:auto 1fr auto;background:radial-gradient(1200px 600px at 50% -20%,#3b2414,transparent 70%),var(--wall)}
+.hdr{display:flex;align-items:center;gap:14px;padding:16px 28px 6px}
+.hdr b{font-family:"EB Garamond";font-size:24px;display:block;line-height:1}
+.hdr span{font-size:13px;color:var(--mute)}
+.hdr .sp{flex:1}
+.hall{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:22px;padding:10px 28px 6px;align-items:stretch}
+.hall.wide{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}
+.court{position:relative;border-radius:14px;overflow:hidden;display:grid;grid-template-rows:auto 1fr;background:#2a1a0f;box-shadow:inset 0 0 0 2px #3e2918,0 30px 60px #000a}
+.wall{display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:16px;align-items:end;padding:16px 18px 0;background:repeating-linear-gradient(90deg,#3a2414 0 46px,#33200f 46px 48px),#3a2414;border-bottom:8px solid #1d1209;position:relative}
+.wall::before{content:"";position:absolute;left:0;right:0;top:0;height:10px;background:linear-gradient(var(--brass),#7a5a24)}
+.screen{align-self:center;border-radius:6px;overflow:hidden;background:#120c07;border:5px solid #1d1209;box-shadow:0 0 0 2px var(--brass),0 10px 20px #0008;height:170px;display:grid;place-items:center;color:#e9dcc6;text-align:center;padding:0}
+.screen img{width:100%;height:100%;object-fit:contain;display:block;background:#0b0805}
+.screen .ex{padding:10px;font-family:"EB Garamond";font-size:18px;line-height:1.15}
+.screen .ex i{display:block;font-style:normal;font:600 11px Inter;color:var(--brass);margin-bottom:4px}
+.bench{position:relative;background:linear-gradient(#7a4c2d,#4f311c 70%);border-top:6px solid var(--brass);border-radius:8px 8px 0 0;padding:44px 14px 16px;text-align:center;box-shadow:0 -6px 30px #0006;transition:box-shadow .5s}
+.bench .emb{position:absolute;left:50%;top:-34px;transform:translateX(-50%);width:62px;height:62px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,var(--brass2),var(--brass) 55%,#8c6c2c);color:#3a230f;font-family:"Noto Serif SC";font-weight:900;font-size:28px;box-shadow:0 6px 16px #0009}
+.bench b{display:block;font-family:"EB Garamond";font-size:22px;color:#f3e6cc}
+.bench .btxt{font-size:14px;color:#e6d4b2;margin-top:4px;min-height:20px}
+.bench.lit{box-shadow:0 0 0 3px var(--brass2),0 0 70px 14px #e9d08e55}
+.clock{justify-self:end;align-self:center;width:132px;height:132px;border-radius:50%;background:radial-gradient(circle,#f5ecd8 0 58%,#d9c9a6 59% 62%,var(--brass) 63% 72%,#6b4f1d 73%);display:grid;place-items:center;box-shadow:0 10px 24px #0009}
+.clock span{font-family:"EB Garamond";font-weight:800;font-size:34px;color:#2a1a0c;font-variant-numeric:tabular-nums}
+.clock span.low{color:#b3241c}
+.floor{display:grid;grid-template-columns:1fr .8fr 1fr;grid-template-rows:auto auto;grid-template-areas:"p d f" "j j g";gap:16px 18px;padding:20px 18px 18px;background:repeating-linear-gradient(115deg,#5a3a22 0 22px,#523420 22px 44px);align-content:start}
+.tbl{grid-area:p;border-radius:8px;padding:12px 14px 14px;background:linear-gradient(#7a4c2d,#5a371f);border-top:4px solid #8e5c37;box-shadow:0 12px 0 #2c1b10,0 18px 30px #0008;transition:box-shadow .45s,transform .45s;position:relative}
+.tbl.def{grid-area:f}
+.tbl h3,.jury h3,.gal h3{display:flex;align-items:center;gap:8px;font-family:"EB Garamond";font-size:21px;color:#f3e6cc;margin-bottom:8px}
+.tbl h3 .cn,.jury h3 .cn,.gal h3 .cn{font-size:15px;color:#e1c88f;font-weight:600}
+.lamp{width:12px;height:12px;border-radius:50%;background:#3b2a17;box-shadow:inset 0 0 0 2px #6b4f1d;flex:none;transition:background .4s,box-shadow .4s}
+.tbl.pros.lit{box-shadow:0 12px 0 #2c1b10,0 0 0 3px var(--oxg),0 0 80px 18px #ff7a6655;transform:translateY(-4px)}
+.tbl.def.lit{box-shadow:0 12px 0 #2c1b10,0 0 0 3px var(--navg),0 0 80px 18px #86b6ff55;transform:translateY(-4px)}
+.tbl.pros.lit .lamp{background:var(--oxg);box-shadow:0 0 16px 4px var(--oxg)}
+.tbl.def.lit .lamp{background:var(--navg);box-shadow:0 0 16px 4px var(--navg)}
+.tbl.work .lamp{animation:blink 1.6s infinite}
+@keyframes blink{50%{background:var(--brass2);box-shadow:0 0 10px 2px var(--brass2)}}
+.seats{display:flex;flex-wrap:wrap;gap:6px}
+.seat{padding:5px 10px;border-radius:5px;background:#00000040;color:#eadcc2;font-weight:600;font-size:14px;transition:all .35s}
+.seat.speak{color:#1b0c08;font-weight:700;transform:scale(1.06)}
+.tbl.pros .seat.speak{background:var(--oxg);box-shadow:0 0 18px 4px #ff7a6688}
+.tbl.def .seat.speak{background:var(--navg);box-shadow:0 0 18px 4px #86b6ff88}
+.seat.g{background:var(--ox);color:#fff}.seat.n{background:var(--navy);color:#fff}
+.seat.inf{outline:2px dashed var(--oxg);outline-offset:2px}
+.filed{position:absolute;right:12px;top:12px;font:600 12px Inter;color:#f3e6cc;background:#0005;border-radius:99px;padding:3px 9px}
+.dock{grid-area:d;justify-self:center;align-self:center;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 16px 10px;border:3px solid var(--brass);border-bottom-width:6px;border-radius:10px 10px 4px 4px;background:#2c1b1066;text-align:center}
+.dock svg{width:64px;height:64px}
+.dock b{font-family:"EB Garamond";font-size:17px;color:#f3e6cc;line-height:1.1}
+.dock span{font-size:12px;color:#d9c49b}
+.jury{grid-area:j;border-radius:8px;padding:12px 14px;background:linear-gradient(#5a3a20,#432a16);border:3px solid #8e6a2f;transition:box-shadow .45s}
+.jury.lit{box-shadow:0 0 0 3px var(--jurg),0 0 80px 16px #f0d27a44}
+.jury .seats{gap:8px}
+.jury .seat{background:#2c1b10;border:1px solid #6b4f1d}
+.gal{grid-area:g;border-radius:8px;padding:12px 14px;background:#2c1b10aa;border:1px dashed #6b4f1d}
+.gal .dots{display:flex;flex-wrap:wrap;gap:5px}
+.gal .dots i{width:14px;height:14px;border-radius:50% 50% 30% 30%;background:#8a7054;display:block}
+.gal .names{display:flex;flex-wrap:wrap;gap:6px;font-size:14px;color:#e7d6b6}
+.plate{position:absolute;left:50%;bottom:16px;transform:translateX(-50%) translateY(140%);transition:transform .45s cubic-bezier(.2,.9,.2,1);padding:10px 26px 12px;border-radius:6px;background:linear-gradient(var(--brass2),var(--brass));color:#2a1a0c;text-align:center;box-shadow:0 10px 30px #000a;white-space:nowrap;z-index:3}
+.plate.show{transform:translateX(-50%) translateY(0)}
+.plate small{display:block;font:600 12px Inter;color:#5a4220}
+.plate b{font-family:"EB Garamond";font-size:30px;font-weight:800;line-height:1.05}
+.record{background:var(--paper);color:var(--ink);border-radius:6px;padding:28px 30px;box-shadow:0 30px 60px #000c;position:relative;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+.record::before{content:"";position:absolute;inset:8px;border:1px solid #c9b994;border-radius:3px;pointer-events:none}
+.record .no{font:600 13px Inter;color:#7a6a52}
+.record h1{font-family:"EB Garamond";font-size:42px;line-height:1;font-weight:800}
+.record h2{font-family:"EB Garamond";font-size:28px;line-height:1.05;font-weight:800}
+.record p{font-size:18px;line-height:1.45}
+.record .seal{width:92px;height:92px;font-size:19px;right:24px;top:20px}
+.chg{border-top:1px solid #d2c3a0;padding-top:10px}
+.chg b{display:block;font-family:"EB Garamond";font-size:21px}
+.chg span{font-size:16px;color:#4d4232}
+.qr{align-self:center;background:#fff;padding:14px;border-radius:6px;box-shadow:0 0 0 1px #c9b994}
+.qr canvas,.qr img{width:min(30vh,300px)!important;height:auto!important;display:block}
+.url{font:700 16px Inter;text-align:center;overflow-wrap:anywhere}
+.tally{display:flex;gap:26px;flex-wrap:wrap}
+.tally div{display:flex;flex-direction:column}
+.num{font-family:"EB Garamond";font-weight:800;font-size:64px;line-height:.95}
+.num.p{color:var(--ox)}.num.d{color:var(--navy)}.num.j{color:#8a6a1a}
+.pt{border-radius:5px;padding:12px 14px;display:flex;gap:14px;align-items:flex-start;font-size:17px;line-height:1.35;color:#fff}
+.pt.pros{background:#7c241f}.pt.def{background:#284d84}
+.pt .sc{font-family:"EB Garamond";font-weight:800;font-size:26px;min-width:48px;line-height:1}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.colh{font-family:"EB Garamond";font-size:24px;font-weight:800}
+.colh.p{color:var(--ox)}.colh.d{color:var(--navy)}
+.clerk{font-size:17px;border-left:3px solid #b3241c;padding-left:12px;font-style:italic;font-family:"EB Garamond";font-size:20px}
+.qbig{font-family:"EB Garamond";font-size:34px;line-height:1.2;font-weight:600}
+.vcard{border-radius:5px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;background:#fffaf0;border:1px solid #d2c3a0}
+.vv{font-family:"EB Garamond";font-weight:800;font-size:40px;line-height:1}
+.vv.g{color:var(--ox)}.vv.n{color:var(--navy)}
+.vcard p{font-size:16px}
+.src{font-size:13px;color:#7a6a52}
+.hammer{border-radius:5px;padding:16px 18px;background:#fffaf0;border:1px solid #d2c3a0;display:flex;flex-direction:column;gap:6px}
+.hammer q{font-family:"EB Garamond";font-size:24px;line-height:1.3;font-weight:600}
+.loaders{display:flex;gap:8px;flex-wrap:wrap}
+.lb{font:600 13px Inter;padding:8px 12px;border-radius:5px;background:#e5d8bc;color:var(--ink);cursor:pointer}
+.ctrl{display:flex;gap:10px;align-items:center;padding:10px 28px 16px;flex-wrap:wrap;opacity:.35;transition:opacity .2s}
+.ctrl:hover,.ctrl:focus-within{opacity:1}
+.cb{height:38px;padding:0 14px;border-radius:5px;background:#2a1b10;border:1px solid #4a3220;font-weight:600;font-size:14px;color:#efe5d3}
+.cb.p{background:var(--ox);border-color:var(--ox);color:#fff}
+.ctrl .sp{flex:1}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#2a1b10;border:1px solid #4a3220;padding:10px 16px;border-radius:6px;font-size:14px;z-index:9}
+@media (max-width:1000px){.hall,.hall.wide{grid-template-columns:1fr}.wall{grid-template-columns:1fr 1fr}.screen{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"><div class="ph"><div class="wait"><div class="gavel">法</div><p class="note">Connecting to the court…</p></div></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import {getDatabase,ref,onValue,set,update,push} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const app=initializeApp({apiKey:"AIzaSyA3GseZ9QJ0X4r2L0phJqh-NCZZI-HrHPA",authDomain:"weibo404.firebaseapp.com",databaseURL:"https://weibo404-default-rtdb.europe-west1.firebasedatabase.app",projectId:"weibo404",storageBucket:"weibo404.firebasestorage.app",messagingSenderId:"571494018319",appId:"1:571494018319:web:17df34d7025ff75d44627a"});
+const db=getDatabase(app);
+const ROOM="rooms/court", R=p=>ref(db,ROOM+(p?"/"+p:""));
+const HOST=new URLSearchParams(location.search).has("beamer");
+const T_ARGS=240,T_PLEA=90,T_Q=40;
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
+let cid=store.get("mt_cid"); if(!cid){cid="m"+Math.random().toString(36).slice(2,10);store.set("mt_cid",cid)}
+let S={}, off=0, view="";
+const now=()=>Date.now()+off;
+onValue(ref(db,".info/serverTimeOffset"),s=>off=s.val()||0);
+const toast=t=>{const d=document.createElement("div");d.className="toast";d.textContent=t;document.body.append(d);setTimeout(()=>d.remove(),2600)};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const tmo=(p,ms)=>Promise.race([p,new Promise((_,r)=>setTimeout(()=>r(new Error("timeout")),ms))]);
+const fmt=ms=>{ms=Math.max(0,ms);const s=Math.ceil(ms/1000);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
+function mount(key,html,bind){ if(view===key) return false; view=key; $("#app").innerHTML=html; bind&&bind(); return true; }
+const cache={};
+function setH(id,html){const el=document.getElementById(id);if(!el)return;if(cache[id]===html&&el.dataset.k===view)return;cache[id]=html;el.dataset.k=view;el.innerHTML=html}
+
+const CASES=[
+ {title:"The People v. Badiucao",def:"Badiucao",work:"“Xi nursing Putin” (2022)",desc:"A digital painting in the style of a Christian Madonna: Xi Jinping holds and breast-feeds Vladimir Putin like an infant.",
+  charges:[["Art. 105 (2) PRC Criminal Law","Inciting subversion of state power “by spreading rumours or slanders or any other means” – up to 5 years, more if “grave”."],["Art. 293 PRC Criminal Law","Picking quarrels and provoking trouble – used against online speech since 2013."]],
+  pros:["It humiliates the head of state – mocking the leader is an attack on the whole nation.","It distorts China's neutral position on the Ukraine crisis and spreads the rumour that China feeds Russia's war.","Satire is never innocent: images like this are shared to stir people up and are used by foreign forces to smear China."],
+  def:["It is a picture, not an act: no violence, no call to action, nobody harmed.","It comments on public facts: during the war China became Russia's most important trading partner.","A confident state can tolerate a cartoon – punishing it proves the artist's point."],
+  jury:["Ask the prosecution: who exactly was harmed by this picture?","Ask the defence: is an artist living abroad responsible for consequences inside China?","Judge the arguments, not the volume."],
+  reality:"In reality Badiucao lives in Australia. In November 2018 his first solo show in Hong Kong was cancelled one day before opening after threats from Chinese authorities; he says police visited his family in China and questioned a relative for hours.",
+  src:"RSF (2018); Reuters (2018); The Intercept (2019)"},
+ {title:"Appeal: The People v. Ai Weiwei",def:"Ai Weiwei",work:"Ai Weiwei's work on the war in Ukraine",desc:"The work from our presentation: it shows the suffering caused by the war – without naming a culprit.",
+  charges:[["Art. 293 PRC Criminal Law","Picking quarrels and provoking trouble – “disrupting public order”, also online."]],
+  pros:["The artist has a record: in 2011 he was detained for 81 days. He has worked against China from abroad for years.","By showing only suffering he hides his real target: China's partner Russia.","Western museums use him as a tool to smear China."],
+  def:["The work names no one. Since when is compassion a crime?","Showing suffering is a universal human message – it cannot ‘subvert’ anything.","If even this is punished, art itself becomes the crime."],
+  jury:["Is art that blames no one less dangerous – or more?","Ask: what exactly is the ‘trouble’ this work provokes?","Compare it with the first case."],
+  reality:"In reality Ai Weiwei was detained for 81 days in 2011 without formal charges and left China in 2015; he now lives in Europe.",
+  src:"BBC; The Guardian"}
+];
+const ROLES={pros:{n:"Prosecution",cn:"公诉人",m:"Get a conviction. Argue as the state would: stability, the dignity of the leader, foreign interference.",h:"Argument ideas"},
+ def:{n:"Defence",cn:"辩护人",m:"Get an acquittal. Argue for the artist: satire, facts, freedom of art.",h:"Argument ideas"},
+ jury:{n:"Jury",cn:"陪审员",m:"Listen, send sharp questions, then decide. You vote twice: once in public, once in secret.",h:"Question ideas"}};
+const cs=()=>(S.state||{}).case||0;
+const me=()=>(S.players||{})[cid];
+const argsOf=c=>Object.entries((S.args||{})[c]||{}).map(([id,a])=>({id,...a,n:Object.keys(((S.up||{})[c]||{})[id]||{}).length}));
+const dos=c=>(S.dossier||{})[c];
+const tally=(path,c)=>{const v=Object.values((S[path]||{})[c]||{});const g=v.filter(x=>x===1).length;return {n:v.length,g,p:v.length?Math.round(g/v.length*100):0}};
+const nameOf=id=>((S.players||{})[id]||{}).name||"someone";
+const caseNo=c=>`(2026) Mock Crim. No. ${String(c+1).padStart(3,"0")}`;
+function activeSides(st){const c=st.case||0;if(st.phase!=="plea")return [];if(st.sub==="pros")return ["pros"];if(st.sub==="def")return ["def"];const q=(S.q||{})[c];const to=(q&&q.to)||"both";return /pros/i.test(to)?["pros"]:/def/i.test(to)?["def"]:["pros","def"]}
+
+let aiModel=null, aiBusy=null, aiStatus="Clerk: connecting…";
+const MODELS=["gemini-flash-lite-latest","gemini-flash-latest","gemini-3.8-flash","gemini-2.5-flash-lite"];
+const setAiSt=t=>{aiStatus=t;const e=document.getElementById("aist");if(e)e.textContent=t};
+async function getModel(){
+ if(aiModel) return aiModel;
+ if(aiBusy) return aiBusy;
+ aiBusy=(async()=>{
+  try{
+   const m=await import("https://www.gstatic.com/firebasejs/12.0.0/firebase-ai.js");
+   const key=new URLSearchParams(location.search).get("k")||store.get("w404k");
+   if(key){store.set("w404k",key);if(location.search.includes("k="))history.replaceState(null,"",location.pathname+"?beamer");self.FIREBASE_APPCHECK_DEBUG_TOKEN=key;const ac=await import("https://www.gstatic.com/firebasejs/12.0.0/firebase-app-check.js");ac.initializeAppCheck(app,{provider:new ac.ReCaptchaV3Provider("debug-only"),isTokenAutoRefreshEnabled:true})}
+   const ai=m.getAI(app,{backend:new m.GoogleAIBackend()});
+   for(const name of MODELS){
+    try{const md=m.getGenerativeModel(ai,{model:name,generationConfig:{responseMimeType:"application/json",temperature:.3}});
+     await tmo(md.generateContent('Reply with {"ok":true}'),25000); md._n=name; aiModel=md; setAiSt("Clerk present"); return md;
+    }catch(e){console.warn("[court] model failed",name,e.message)}
+   }
+  }catch(e){console.warn("[court] AI SDK failed",e)}
+  setAiSt("Clerk absent · fallback"); setTimeout(()=>{aiBusy=null},30000); return null;
+ })();
+ return aiBusy;
+}
+async function aiJSON(prompt){
+ const md=await getModel(); if(!md) return null;
+ for(let k=0;k<3;k++){
+  try{const r=await tmo(md.generateContent(prompt),45000);return JSON.parse(r.response.text().trim().replace(/^```(json)?|```$/g,""))}
+  catch(e){console.warn("[court] ai",e.message);if(/429|quota|exhaust|timeout|503/i.test(e.message))await sleep(5000*(k+1));else return null}
+ }
+ return null;
+}
+async function makeDossier(c){
+ const K=CASES[c],A=argsOf(c);
+ const list=A.map(a=>`${a.side==="pros"?"P":"D"} [${a.id}] (+${a.n}): ${a.text.replace(/\s+/g," ")}`).join("\n")||"(no arguments were filed)";
+ let j=await aiJSON(`You are the court clerk in a classroom role-play trial (university seminar on art and censorship in China). Students were randomly assigned to argue for the prosecution (P) or the defence (D); these are roles, not their opinions.
+Case: ${K.title}. Artwork: ${K.work} – ${K.desc}
+Charges: ${K.charges.map(x=>x[0]+": "+x[1]).join(" | ")}
+Tasks:
+1) For each side, merge the students' arguments into the 3 strongest distinct points. Rewrite each in max 22 words and keep the students' ideas. Only if a side filed fewer than 3 arguments, add your own point and start it with "(clerk)". Score each point 1-10 for persuasiveness in front of a neutral jury.
+2) Pick the single best original argument by its id and explain why in max 15 words.
+3) Say which side argued more convincingly, in max 25 words.
+Reply with JSON only: {"pros":[{"t":"...","s":7}],"def":[{"t":"...","s":6}],"best":{"id":"...","why":"..."},"edge":"pros" or "def" or "even","note":"..."}
+ARGUMENTS:
+${list}`);
+ const fb=side=>A.filter(a=>a.side===side).sort((x,y)=>y.n-x.n).slice(0,3).map(a=>({t:a.text,s:null}));
+ if(!j||!Array.isArray(j.pros)||!Array.isArray(j.def)){const b=[...A].sort((x,y)=>y.n-x.n)[0];j={pros:fb("pros"),def:fb("def"),best:b?{id:b.id,why:"most upvoted by the team"}:null,edge:"even",note:"",src:"team votes (clerk absent)"}}
+ else j.src="AI clerk";
+ const cl=L=>(L||[]).slice(0,3).map(x=>({t:String(x.t||"").slice(0,220),s:x.s==null?null:Math.max(1,Math.min(10,Math.round(+x.s)||5))}));
+ j.pros=cl(j.pros);j.def=cl(j.def);
+ if(j.best&&!A.find(a=>a.id===j.best.id))j.best=null;
+ if(j.best){const a=A.find(x=>x.id===j.best.id);j.best={id:a.id,why:String(j.best.why||"").slice(0,120),text:a.text,cid:a.cid,side:a.side}}
+ j.edge=["pros","def","even"].includes(j.edge)?j.edge:"even";j.note=String(j.note||"").slice(0,200);
+ await set(R(`dossier/${c}`),j);
+}
+async function pickQ(c){
+ const K=CASES[c],Q=Object.entries((S.qs||{})[c]||{}).map(([id,q])=>({id,...q}));
+ if(!Q.length){await set(R(`q/${c}`),{text:"The judge asks both sides: Who exactly was harmed by this artwork?",to:"both",judge:true});return}
+ const j=await aiJSON(`Classroom role-play trial: ${K.title}. Pick the single best jury question: sharp, fair and answerable in 30 seconds. Questions:\n${Q.map(q=>`[${q.id}] ${q.text}`).join("\n")}\nReply with JSON only: {"id":"...","to":"prosecution" or "defence" or "both"}`);
+ const q=Q.find(x=>x.id===j?.id)||Q[Q.length-1];
+ await set(R(`q/${c}`),{text:q.text,to:j?.to||"both"});
+}
+async function makeVerdict(c){
+ const K=CASES[c],d=dos(c)||{},o=tally("vopen",c),s=tally("vsecret",c);
+ let j=await aiJSON(`You are the presiding judge in a classroom role-play trial (university seminar on art and censorship in China). Be realistic, factual and sober.
+Case: ${K.title}. Artwork: ${K.work} – ${K.desc}
+Charges: ${K.charges.map(x=>x[0]+": "+x[1]).join(" | ")}
+Strongest prosecution points: ${(d.pros||[]).map(x=>x.t).join(" | ")||"none"}
+Strongest defence points: ${(d.def||[]).map(x=>x.t).join(" | ")||"none"}
+Class jury: open vote ${o.p}% guilty (${o.n} votes), secret ballot ${s.p}% guilty (${s.n} votes).
+Give two realistic verdicts:
+"cn": a court of the People's Republic of China under Xi Jinping. Consider that Chinese courts convict in well over 99% of criminal cases and that political speech cases under Art. 105 usually end in prison terms. Art. 105 (2) allows up to 5 years, more only if the case is "grave". Give the likely sentence IF the artist stood trial in China. Do not invent trials in absentia, asset freezes or other details – China rarely tries absent dissidents; in reality the state pressures family members, bans entry and censors the work.
+"ch": a Swiss court under the Federal Constitution (Art. 16 freedom of expression, Art. 21 freedom of art) and Swiss criminal law.
+Reply with JSON only: {"cn":{"v":"Guilty" or "Not guilty","sentence":"likely sentence if tried in China, max 12 words, start with 'If tried in China:'","reason":"max 45 words"},"ch":{"v":"Guilty" or "Not guilty","sentence":"max 8 words","reason":"max 35 words"}}`);
+ if(!j||!j.cn||!j.ch) j={cn:{v:"Guilty",sentence:"If tried in China: several years in prison (Art. 105)",reason:"Mocking the leader and China's partnership with Russia is treated as rumour and slander endangering state power. Acquittals in such cases are practically unheard of."},ch:{v:"Not guilty",sentence:"No offence",reason:"Political satire about public figures is protected by freedom of expression (Art. 16) and freedom of art (Art. 21 of the Federal Constitution)."},src:"fallback (clerk absent)"};
+ else j.src="AI judge";
+ await set(R(`verdict/${c}`),j);
+}
+let assigning=false;
+function assignRoles(){
+ const P=S.players||{};const ids=Object.keys(P).filter(id=>!P[id].role).sort((a,b)=>P[a].t-P[b].t);
+ if(!ids.length||assigning)return;assigning=true;
+ const cnt={pros:0,def:0,jury:0};Object.values(P).forEach(p=>p.role&&cnt[p.role]++);const tgt={pros:.3,def:.3,jury:.4};const upd={};
+ ids.forEach(id=>{const r=Object.keys(tgt).sort((a,b)=>(cnt[a]+1)/tgt[a]-(cnt[b]+1)/tgt[b])[0];cnt[r]++;upd[`players/${id}/role`]=r});
+ update(R(),upd).finally(()=>{assigning=false});
+}
+function assignInformants(){
+ const P=S.players||{};if(Object.values(P).some(p=>p.inf))return;
+ const J=Object.keys(P).filter(id=>P[id].role==="jury").sort(()=>Math.random()-.5);const n=J.length>=8?2:J.length>=3?1:0;
+ const upd={};J.slice(0,n).forEach(id=>upd[`players/${id}/inf`]=true);if(n)update(R(),upd);
+}
+const busyH=new Set();
+function hostEffects(){
+ const st=S.state||{},c=st.case||0;assignRoles();
+ const once=(k,fn)=>{if(busyH.has(k))return;busyH.add(k);fn().catch(e=>{console.warn(e);busyH.delete(k)})};
+ if(st.phase==="dossier"&&!dos(c))once("d"+c,()=>makeDossier(c));
+ if(st.phase==="plea"&&st.sub==="q"&&!(S.q||{})[c])once("q"+c,()=>pickQ(c));
+ if(st.phase==="verdict"&&!(S.verdict||{})[c])once("v"+c,()=>makeVerdict(c));
+}
+
+function roleCard(p,K){
+ const r=ROLES[p.role];
+ return `<div class="role ${p.role}"><span class="hl">Your role, drawn by lot</span><div class="big"><span class="cn">${r.cn}</span><b>${r.n}</b></div><p>${r.m}</p><span class="hl">${r.h}</span>${K[p.role].map(h=>`<div class="hint">${esc(h)}</div>`).join("")}</div>${p.inf?`<div class="secret"><b>SECRET ROLE · Informant 线人</b><p>You secretly work for State Security. Steer the jury towards “guilty” without being discovered: ask leading questions, vote “guilty” in the open vote, look neutral. Tell no one.</p></div>`:""}`;
+}
+function dossierHTML(c,only){
+ const d=dos(c);if(!d)return `<div class="doc"><p class="note">The clerk is reading the files…</p></div>`;
+ const col=side=>`<div class="dcol"><b class="serif" style="font-size:20px;color:${side==="pros"?"#ff9d8f":"#a9c9ff"}">${side==="pros"?"Prosecution":"Defence"}</b>${(d[side]||[]).map(x=>`<div class="dpt ${side}">${x.s!=null?`<b>${x.s}</b>`:""}<span>${esc(x.t)}</span></div>`).join("")||`<span class="note">no arguments</span>`}</div>`;
+ return only&&only!=="jury"?col(only):col("pros")+col("def");
+}
+function renderPhone(){
+ const st=S.state||{phase:"lobby"},p=me(),c=cs(),K=CASES[c],ph=st.phase;
+ if(!p) return mount("join",joinHTML(),bindJoin);
+ const top=r=>`<div class="top"><div class="crest">法</div><b>Mock Trial</b><div class="sp"></div>${r||`<span class="tag">${esc(p.name)}</span>`}</div>`;
+ if(ph==="lobby"||!p.role) return mount("lobby",`<div class="ph">${top()}<div class="wait"><div class="gavel">法</div><h2>Please take a seat.</h2><p class="note">Your role is drawn by lot and handed to you when the court opens.</p></div></div>`);
+ const rc=`<details class="rc"><summary>My role card</summary>${roleCard(p,K)}</details>`;
+ const timer=`<span class="tag on" data-end="1">--:--</span>`;
+ if(ph==="charge") return mount("charge"+c,`<div class="ph">${top(`<span class="tag on">Case ${c+1}</span>`)}<p class="note">${esc(K.title)} · ${esc(K.work)}</p>${roleCard(p,K)}<p class="note">Keep your role to yourself. You argue your role – not your own opinion.</p></div>`);
+ if(ph==="args"||ph==="plea"){
+  const act=activeSides(st);
+  const speak=ph==="plea"?`<div class="speak ${st.sub}"><span>${st.sub==="q"?"Jury question – answer":(st.sub==="pros"?"The prosecution pleads":"The defence pleads")}</span><span data-end="1">--:--</span></div>`:"";
+  if(p.role==="jury"){mount("jq"+ph+c+(st.sub||""),`<div class="ph">${top(timer)}${speak}<div class="doc"><span class="lbl">JURY · QUESTIONS TO THE PARTIES</span><p>Send sharp questions. The court picks the best one for the parties.</p><textarea id="ta" class="inp" maxlength="160" placeholder="Your question to the prosecution or the defence…"></textarea><button class="btn" id="post">Hand question to the clerk</button><div id="list" class="dcol"></div></div>${rc}</div>`,bindQ);return listQ()}
+  if(ph==="plea"){
+   mount("pl"+c+st.sub+(dos(c)?1:0),`<div class="ph">${top(timer)}${speak}<div id="floor"></div><p class="note">Your side's strongest points – speaker notes:</p>${dossierHTML(c,p.role)}${rc}</div>`,()=>{$("#floor").onclick=e=>{const b=e.target.closest("[data-fl]");if(!b)return;if(b.dataset.fl==="take")update(R("state"),{speaker:{cid,name:p.name,side:p.role}});else update(R("state"),{speaker:null})}});
+   const sp=st.speaker,mine=act.includes(p.role);
+   setH("floor",mine?(sp?(sp.cid===cid?`<div class="doc"><span class="lbl">YOU HAVE THE FLOOR</span><h2>Your name is lit up in the courtroom.</h2><button class="btn ghost" data-fl="yield">Yield the floor</button></div>`:`<div class="doc"><span class="lbl">ON THE FLOOR</span><h2>${esc(sp.name)}</h2><p class="note">speaks for your side.</p></div>`):`<button class="btn brass" data-fl="take">Take the floor · 发言</button>`):`<div class="doc"><span class="lbl">LISTEN</span><p>${sp?esc(sp.name)+" has the floor.":"The other side speaks now."}</p></div>`);
+   return;
+  }
+  mount("ar"+c+p.role,`<div class="ph">${top(timer)}<div class="doc"><span class="lbl">${ROLES[p.role].n.toUpperCase()} · FILE YOUR ARGUMENTS</span><p>Write the strongest argument for your side. Short and sharp – max. 3 per person.</p><textarea id="ta" class="inp" maxlength="220" placeholder="${p.role==="pros"?"Why must the artist be convicted?":"Why must the artist be acquitted?"}"></textarea><button class="btn" id="post">File with the court</button></div><p class="note">Your team's arguments – vote for the strongest:</p><div id="list" class="dcol"></div>${rc}</div>`,bindArgs);
+  return listArgs();
+ }
+ if(ph==="dossier") return mount("do"+c+(dos(c)?1:0),`<div class="ph">${top()}<div class="doc"><span class="lbl">THE COURT FILE</span><h2>The clerk has read the arguments.</h2><p class="note">Merged into the strongest points, scored 1–10.</p></div>${dossierHTML(c)}${rc}</div>`);
+ if(ph==="vopen"){
+  if(p.role!=="jury") return mount("vo-x"+c,`<div class="ph">${top()}<div class="wait"><div class="gavel">法</div><h2>The jury votes in public.</h2><p class="note">Watch the jury box. Your turn comes next – in secret.</p></div></div>`);
+  mount("vo"+c,`<div class="ph">${top()}<div class="doc"><span class="lbl">OPEN VOTE · JURY</span><h2>Guilty or not guilty?</h2><p>Your name and your vote will light up in the jury box.</p></div><div class="vbtns"><button class="vb g" data-v="1"><span class="cn">有罪</span>Guilty</button><button class="vb n" data-v="0"><span class="cn">无罪</span>Not guilty</button></div>${rc}</div>`,()=>bindVote("vopen"));
+  return markVote("vopen");
+ }
+ if(ph==="vsecret"){
+  mount("vs"+c,`<div class="ph">${top()}<div class="doc"><span class="lbl">SECRET BALLOT · EVERYONE</span><h2>Forget your role.</h2><p>Vote as yourself. Anonymous – nobody sees your choice, not even the court.</p></div><div class="vbtns"><button class="vb g" data-v="1"><span class="cn">有罪</span>Guilty</button><button class="vb n" data-v="0"><span class="cn">无罪</span>Not guilty</button></div></div>`,()=>bindVote("vsecret"));
+  return markVote("vsecret");
+ }
+ if(ph==="verdict"){
+  const v=(S.verdict||{})[c],o=tally("vopen",c),s=tally("vsecret",c);
+  return mount("vd"+c+(st.rev?"r":"")+(v?1:0),`<div class="ph">${top()}<div class="doc"><span class="lbl">THE VOTES</span><p><b>Open jury vote:</b> ${o.p}% guilty (${o.n})<br><b>Secret ballot:</b> ${s.p}% guilty (${s.n})</p></div>${st.rev&&v?`<div class="doc"><span class="lbl">A COURT IN CHINA</span><h2>${esc(v.cn.v)}</h2><p>${esc(v.cn.sentence)}</p></div><div class="doc"><span class="lbl">A COURT IN SWITZERLAND</span><h2>${esc(v.ch.v)}</h2><p>${esc(v.ch.sentence)}</p></div>`:`<p class="note">All rise. The court is deliberating…</p>`}</div>`);
+ }
+ if(ph==="guess"){
+  if(p.inf) return mount("gi",`<div class="ph">${top()}<div class="wait"><div class="gavel">线</div><h2>They are hunting you.</h2><p class="note">The room is trying to identify the informant. Stay calm.</p></div></div>`);
+  mount("gs",`<div class="ph">${top()}<div class="doc"><span class="lbl">AN INFORMANT SAT ON THE JURY</span><h2>Who worked for State Security?</h2><p class="note">Pick your suspect.</p></div><div class="gl" id="gl"></div></div>`,bindGuess);
+  return markGuess();
+ }
+ if(ph==="finale"){
+  const inf=Object.keys(S.players||{}).filter(id=>S.players[id].inf),g=(S.guess||{})[cid];
+  const best=[0,1].map(i=>dos(i)?.best).filter(Boolean);
+  return mount("fi"+inf.join()+g+best.length,`<div class="ph">${top()}<div class="doc"><span class="lbl">COURT ADJOURNED</span><h1>The session is closed.</h1>${p.inf?`<p><b>You were the informant.</b> Did they catch you? Look at the courtroom.</p>`:`<p><b>The informant${inf.length>1?"s were":" was"}: ${inf.map(nameOf).map(esc).join(" & ")||"nobody"}.</b> ${g?(inf.includes(g)?"You caught them.":"You suspected the wrong person – suspicion spreads, just as surveillance intends."):"You didn't guess."}</p>`}</div>${best.map(b=>`<div class="doc"><span class="lbl">GOLDEN GAVEL 金槌 · ${esc(nameOf(b.cid))}</span><p class="serif" style="font-size:20px">“${esc(b.text)}”</p></div>`).join("")}<p class="note">Art of Resistance · Pop Culture in China · HSG. All data is deleted after the session.</p></div>`);
+ }
+}
+function joinHTML(){
+ const nm=store.get("mt_name")||"";
+ return `<div class="ph"><div class="wait" style="gap:18px"><div class="gavel">法</div><div class="doc" style="text-align:left;width:100%"><div class="seal">模拟<br>法庭</div><span class="lbl">SUMMONS · 传票</span><h1>You are summoned to court.</h1><p>A mock trial against a real artwork. You receive a secret role – prosecution, defence or jury – and argue your role, not your own opinion.</p><div class="field"><label for="nm">Name for the court roll (a pseudonym is fine – it may appear on the screen)</label><input id="nm" class="inp" maxlength="16" autocomplete="off" placeholder="e.g. Citizen Wang" value="${esc(nm)}"></div><button class="btn" id="go">Enter the courtroom</button><p class="note">No real names needed. Everything is deleted after the session.</p></div></div></div>`;
+}
+function bindJoin(){
+ const go=()=>{const n=$("#nm").value.trim().slice(0,16)||("Citizen "+Math.floor(10+Math.random()*90));store.set("mt_name",n);set(R("players/"+cid),{name:n,t:Date.now()})};
+ $("#go").onclick=go;$("#nm").onkeydown=e=>{if(e.key==="Enter")go()};
+}
+function bindArgs(){
+ $("#post").onclick=()=>{const t=$("#ta").value.trim();if(t.length<8)return toast("Write a bit more");if(argsOf(cs()).filter(a=>a.cid===cid).length>=3)return toast("Max. 3 arguments – vote for the best instead");push(R(`args/${cs()}`),{cid,side:me().role,text:t.slice(0,220),t:Date.now()});$("#ta").value="";toast("Filed with the court")};
+ $("#list").onclick=e=>{const b=e.target.closest("[data-up]");if(!b)return;const c=cs(),id=b.dataset.up,on=(((S.up||{})[c]||{})[id]||{})[cid];set(R(`up/${c}/${id}/${cid}`),on?null:1)};
+}
+function listArgs(){
+ const c=cs(),side=me().role;
+ const A=argsOf(c).filter(a=>a.side===side).sort((x,y)=>y.n-x.n||x.t-y.t);
+ setH("list",A.map(a=>{const on=(((S.up||{})[c]||{})[a.id]||{})[cid];return `<div class="arg"><p>${esc(a.text)}</p>${a.cid===cid?`<span class="mine">yours · ▲${a.n}</span>`:`<button class="up ${on?"on":""}" data-up="${a.id}">▲ ${a.n}</button>`}</div>`}).join("")||`<p class="note">No arguments yet – be the first.</p>`);
+}
+function bindQ(){$("#post").onclick=()=>{const t=$("#ta").value.trim();if(t.length<6)return toast("Write a bit more");push(R(`qs/${cs()}`),{cid,text:t.slice(0,160),t:Date.now()});$("#ta").value="";toast("Question handed to the clerk")}}
+function listQ(){const Q=Object.values((S.qs||{})[cs()]||{}).filter(q=>q.cid===cid);setH("list",Q.length?`<span class="lbl">YOUR QUESTIONS</span>`+Q.map(q=>`<div class="arg"><p>${esc(q.text)}</p></div>`).join(""):"")}
+function bindVote(path){$$(".vb").forEach(b=>b.onclick=()=>{set(R(`${path}/${cs()}/${cid}`),+b.dataset.v);navigator.vibrate&&navigator.vibrate(30)})}
+function markVote(path){const my=((S[path]||{})[cs()]||{})[cid];$$(".vb").forEach(b=>b.classList.toggle("on",+b.dataset.v===my))}
+function bindGuess(){$("#gl").onclick=e=>{const b=e.target.closest("[data-g]");if(b)set(R(`guess/${cid}`),b.dataset.g)}}
+function markGuess(){const P=S.players||{},g=(S.guess||{})[cid];setH("gl",Object.keys(P).filter(id=>P[id].role==="jury"&&id!==cid).map(id=>`<button class="gb ${g===id?"on":""}" data-g="${id}">${esc(P[id].name)}</button>`).join("")||`<p class="note">No jurors.</p>`)}
+
+const IMGS=[store.get("mt_img0"),store.get("mt_img1")];
+function loadImg(file,k){const im=new Image();im.onload=()=>{const s=Math.min(1,1400/Math.max(im.width,im.height));const cv=document.createElement("canvas");cv.width=Math.round(im.width*s);cv.height=Math.round(im.height*s);cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);const d=cv.toDataURL("image/jpeg",.82);IMGS[k]=d;store.set("mt_img"+k,d);view="";renderHost();toast("Exhibit "+(k+1)+" loaded")};im.src=URL.createObjectURL(file)}
+const joinURL=()=>location.origin+location.pathname;
+const CHAIR=`<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M18 6h28v26H18z" fill="#5a371f" stroke="#c9a45c" stroke-width="2"/><path d="M14 32h36v6H14z" fill="#7a4c2d" stroke="#c9a45c" stroke-width="2"/><path d="M17 38v20M47 38v20M21 38v14M43 38v14" stroke="#c9a45c" stroke-width="3" stroke-linecap="round"/></svg>`;
+function renderHost(){
+ hostEffects();
+ const st=S.state||{phase:"lobby"},c=st.case||0,K=CASES[c],P=S.players||{},ph=st.phase;
+ const wide=["dossier","verdict","finale"].includes(ph);
+ const k="h-"+ph+"-"+c+"-"+(st.sub||"")+"-"+(st.rev?1:0)+"-"+IMGS.map(x=>x?1:0).join("");
+ mount(k,`<div class="bm"><header class="hdr"><div class="crest">法</div><div><b>模拟法庭 · Mock Trial</b><span>${ph==="lobby"?"Art of Resistance · Pop Culture in China":esc(caseNo(c))+" · "+esc(K.title)}</span></div><div class="sp"></div><span class="small" id="aist">${aiStatus}</span></header>
+  <main class="hall ${wide?"wide":""}"><section class="court"><div class="wall"><div class="screen" id="exh">${IMGS[c]&&ph!=="lobby"?`<img alt="${esc(K.work)}" src="${IMGS[c]}">`:`<div class="ex"><i>EXHIBIT A</i>${esc(K.work)}</div>`}</div><div class="bench" id="bench"><div class="emb">法</div><b>Presiding Judge</b><div class="btxt" id="btxt"></div></div><div class="clock"><span id="clk" data-end="1">–</span></div></div>
+  <div class="floor"><div class="tbl pros" id="tP"></div><div class="dock">${CHAIR}<b>${esc(K.def)}</b><span>Defendant · absent</span></div><div class="tbl def" id="tD"></div><div class="jury" id="jb"></div><div class="gal" id="gal"></div></div><div class="plate" id="plate"></div></section>
+  <aside class="record" id="rec"></aside></main>${ctrl()}</div>`,()=>{bindCtrl();if(ph==="lobby"){CASES.forEach((x,i)=>{const f=$("#im"+i);if(f)f.onchange=e=>e.target.files[0]&&loadImg(e.target.files[0],i)})}});
+ const ids=r=>Object.keys(P).filter(id=>P[id].role===r).sort((a,b)=>P[a].t-P[b].t);
+ const act=activeSides(st),sp=st.speaker;
+ const A=argsOf(c);
+ const tbl=side=>{const n=A.filter(a=>a.side===side).length;return `<h3><span class="lamp"></span>${side==="pros"?"Prosecution":"Defence"} <span class="cn">${ROLES[side].cn}</span></h3>${ph==="args"?`<span class="filed">${n} filed</span>`:""}<div class="seats">${ids(side).map(id=>`<span class="seat ${sp&&sp.cid===id?"speak":""}">${esc(P[id].name)}</span>`).join("")||`<span class="seat">seats empty</span>`}</div>`};
+ setH("tP",tbl("pros"));setH("tD",tbl("def"));
+ $("#tP").classList.toggle("lit",act.includes("pros"));$("#tD").classList.toggle("lit",act.includes("def"));
+ $("#tP").classList.toggle("work",ph==="args");$("#tD").classList.toggle("work",ph==="args");
+ const V=(S.vopen||{})[c]||{};
+ setH("jb",`<h3><span class="lamp"></span>Jury <span class="cn">陪审团</span></h3><div class="seats">${ids("jury").map(id=>{const v=["vopen","vsecret","verdict"].includes(ph)?V[id]:undefined;return `<span class="seat ${v===1?"g":v===0?"n":""} ${ph==="finale"&&P[id].inf?"inf":""}">${esc(P[id].name)}${ph==="finale"&&P[id].inf?" · 线人":""}</span>`}).join("")||`<span class="seat">seats empty</span>`}</div>`);
+ $("#jb").classList.toggle("lit",(ph==="plea"&&st.sub==="q")||["vopen","guess","finale"].includes(ph));
+ const all=Object.keys(P);
+ setH("gal",ph==="lobby"?`<h3>Public gallery <span class="cn">旁听席</span></h3><div class="names">${all.map(id=>`<span>${esc(P[id].name)}</span>`).join(" · ")||"<span>empty</span>"}</div>`:`<h3>Public gallery <span class="cn">旁听席</span></h3><div class="dots">${all.map(()=>"<i></i>").join("")}</div>`);
+ const BT={lobby:"The court will open shortly.",charge:"The indictment is read.",args:"Recess. The parties prepare.",dossier:"The clerk reads the file.",plea:st.sub==="q"?"A question from the jury.":"The court hears the plea.",vopen:"The jury votes in public.",vsecret:"Secret ballot.",verdict:st.rev?"The court has ruled.":"All rise.",guess:"Who informed?",finale:"Court adjourned."};
+ setH("btxt",esc(BT[ph]||""));
+ $("#bench").classList.toggle("lit",["charge","dossier","verdict"].includes(ph));
+ const showPlate=ph==="plea";
+ setH("plate",showPlate?(sp?`<small>${sp.side==="pros"?"FOR THE PROSECUTION":"FOR THE DEFENCE"}</small><b>${esc(sp.name)}</b>`:`<small>${st.sub==="q"?"ANSWER":"THE FLOOR IS OPEN"}</small><b>${st.sub==="pros"?"The Prosecution":st.sub==="def"?"The Defence":act.length>1?"Both parties":act[0]==="pros"?"The Prosecution":"The Defence"}</b>`):"");
+ $("#plate").classList.toggle("show",showPlate);
+ if(!["args","plea"].includes(ph)){const ck=$("#clk");if(ck){ck.removeAttribute("data-end");ck.textContent="–";ck.classList.remove("low")}}
+ setH("rec",recordHTML(st,c,K,P));
+ if(ph==="lobby"&&$("#qr")&&!$("#qr").children.length){new QRCode($("#qr"),{text:joinURL(),width:512,height:512,correctLevel:QRCode.CorrectLevel.M});CASES.forEach((x,i)=>{const f=$("#im"+i);if(f)f.onchange=e=>e.target.files[0]&&loadImg(e.target.files[0],i)})}
+}
+function recordHTML(st,c,K,P){
+ const ph=st.phase,head=`<span class="no">${esc(caseNo(c))}</span>`;
+ if(ph==="lobby"){const n={pros:0,def:0,jury:0};Object.values(P).forEach(p=>p.role&&n[p.role]++);return `<div class="seal">模拟<br>法庭</div><span class="no">SUMMONS · 传票</span><h1>All rise.<br>Scan to enter.</h1><p>You receive a secret role – prosecution, defence or jury – and argue your role, not your own opinion.</p><div class="qr" id="qr"></div><div class="url">${esc(joinURL().replace(/^https?:\/\//,""))}</div><p class="src">${Object.keys(P).length} in court · Prosecution ${n.pros} · Defence ${n.def} · Jury ${n.jury}</p><div class="loaders">${CASES.map((k,i)=>`<label class="lb" for="im${i}">${IMGS[i]?"✓ ":""}Exhibit ${i+1}: load image<input id="im${i}" type="file" accept="image/*" hidden></label>`).join("")}</div>`}
+ if(ph==="charge") return `<div class="seal">人民<br>法院</div>${head}<span class="no">INDICTMENT · 起诉书</span><h1>${esc(K.title)}</h1><p><b>Exhibit A:</b> ${esc(K.work)}. ${esc(K.desc)}</p>${K.charges.map(x=>`<div class="chg"><b>${esc(x[0])}</b><span>${esc(x[1])}</span></div>`).join("")}<p class="src">Your role is on your phone.</p>`;
+ if(ph==="args"){const A=argsOf(c);return `${head}<span class="no">RECESS · 休庭</span><h1>The parties file their arguments.</h1><p>Four minutes. Prosecution and defence write on their phones; the jury drafts questions.</p><div class="tally"><div><span class="num p">${A.filter(a=>a.side==="pros").length}</span><span class="src">prosecution</span></div><div><span class="num d">${A.filter(a=>a.side==="def").length}</span><span class="src">defence</span></div><div><span class="num j">${Object.keys((S.qs||{})[c]||{}).length}</span><span class="src">jury questions</span></div></div>`}
+ if(ph==="dossier"){const d=dos(c);if(!d)return `${head}<span class="no">THE COURT FILE · 案卷</span><h1>The clerk is reading the files…</h1>`;return `${head}<span class="no">THE COURT FILE · 案卷 · STRONGEST POINTS, SCORED 1–10</span><div class="two">${["pros","def"].map(s=>`<div class="dcol"><span class="colh ${s==="pros"?"p":"d"}">${s==="pros"?"Prosecution":"Defence"}</span>${(d[s]||[]).map(x=>`<div class="pt ${s}"><span class="sc">${x.s!=null?x.s:"▲"}</span><span>${esc(x.t)}</span></div>`).join("")||`<p class="src">No arguments filed.</p>`}</div>`).join("")}</div>${d.note?`<p class="clerk">${esc(d.note)}</p>`:""}<p class="src">${esc(d.src||"")}</p>`}
+ if(ph==="plea"){const q=(S.q||{})[c],d=dos(c)||{},sub=st.sub||"pros";if(sub==="q")return `${head}<span class="no">QUESTION FROM THE JURY</span><p class="qbig">${q?"“"+esc(q.text)+"”":"The court is choosing the best question…"}</p>${q&&!q.judge?`<p class="src">To be answered by: ${esc(q.to)}</p>`:""}`;return `${head}<span class="no">PLEA · 90 SECONDS</span><h1>${sub==="pros"?"The prosecution":"The defence"} has the floor.</h1><p class="src">From the court file:</p>${(d[sub]||[]).map(x=>`<div class="pt ${sub}"><span class="sc">${x.s!=null?x.s:"▲"}</span><span>${esc(x.t)}</span></div>`).join("")}`}
+ if(ph==="vopen"){const t=tally("vopen",c),J=Object.keys(P).filter(id=>P[id].role==="jury").length;return `${head}<span class="no">OPEN VOTE · 公开表决</span><h1>Guilty or not guilty?</h1><p>The jury votes in public. Every vote lights up in the jury box.</p><div class="tally"><div><span class="num p">${t.g}</span><span class="src">guilty</span></div><div><span class="num d">${t.n-t.g}</span><span class="src">not guilty</span></div><div><span class="num j">${Math.max(0,J-t.n)}</span><span class="src">undecided</span></div></div>`}
+ if(ph==="vsecret")return `${head}<span class="no">SECRET BALLOT · 无记名投票</span><h1>Forget your role.</h1><p>Now everyone votes as themselves – anonymously.</p><div class="tally"><div><span class="num">${tally("vsecret",c).n}</span><span class="src">of ${Object.keys(P).length} ballots cast</span></div></div>`;
+ if(ph==="verdict"){const v=(S.verdict||{})[c],o=tally("vopen",c),s=tally("vsecret",c);
+  if(!st.rev)return `${head}<span class="no">THE VOTES</span><div class="two"><div class="vcard"><span class="src">OPEN VOTE · JURY · NAMES VISIBLE</span><span class="vv g">${o.p}%</span><p>guilty (${o.g} of ${o.n})</p></div><div class="vcard"><span class="src">SECRET BALLOT · EVERYONE · ANONYMOUS</span><span class="vv n">${s.p}%</span><p>guilty (${s.g} of ${s.n})</p></div></div><p class="clerk">${Math.abs(o.p-s.p)>=10?`A gap of ${Math.abs(o.p-s.p)} points between the public vote and the secret one.`:"Public and secret votes are close."}</p><p class="src">${v?"The court has reached its verdicts.":"The court is deliberating…"}</p>`;
+  if(!v)return `${head}<h1>All rise. The court is deliberating…</h1>`;
+  return `<div class="seal">判决</div>${head}<span class="no">JUDGMENT · 判决书</span><div class="two"><div class="vcard"><span class="src">A COURT IN CHINA 中华人民共和国</span><span class="vv ${/not/i.test(v.cn.v)?"n":"g"}">${esc(v.cn.v)}</span><p><b>${esc(v.cn.sentence)}</b></p><p>${esc(v.cn.reason)}</p></div><div class="vcard"><span class="src">A COURT IN SWITZERLAND</span><span class="vv ${/not/i.test(v.ch.v)?"n":"g"}">${esc(v.ch.v)}</span><p><b>${esc(v.ch.sentence)}</b></p><p>${esc(v.ch.reason)}</p></div></div><p class="clerk">${esc(K.reality)}</p><p class="src">Verdicts: ${esc(v.src||"")}, simulated, not legal advice · Reality: ${esc(K.src)}</p>`}
+ if(ph==="guess")return `<span class="no">AN INFORMANT SAT ON THE JURY · 线人</span><h1>Who worked for State Security?</h1><p>Someone on the jury had a secret order: steer the court towards “guilty”. Everyone picks a suspect on their phone.</p><div class="tally"><div><span class="num">${Object.keys(S.guess||{}).length}</span><span class="src">suspicions filed</span></div></div>`;
+ if(ph==="finale"){const inf=Object.keys(P).filter(id=>P[id].inf),G=Object.values(S.guess||{}),hit=G.filter(g=>inf.includes(g)).length;const conv=[0,1].filter(i=>tally("vopen",i).n).map(i=>({i,t:tally("vopen",i)}));const best=[0,1].map(i=>dos(i)?.best?{...dos(i).best,i}:null).filter(Boolean);
+  return `<span class="no">COURT ADJOURNED · 闭庭</span><div class="two"><div class="dcol"><span class="src">THE INFORMANT${inf.length>1?"S":""}</span><h1 style="color:var(--ox)">${inf.map(nameOf).map(esc).join(" & ")||"nobody"}</h1><p>${G.length?`${hit} of ${G.length} suspected the right person.`:"Nobody filed a suspicion."}</p>${conv.map(x=>`<p class="src">Case ${x.i+1}: open jury vote ${x.t.p}% guilty – mission ${x.t.p>50?"accomplished":"failed"} for State Security.</p>`).join("")}</div><div class="dcol"><span class="src">GOLDEN GAVEL 金槌 · BEST ARGUMENT</span>${best.map(b=>`<div class="hammer"><span class="src">Case ${b.i+1} · ${b.side==="pros"?"Prosecution":"Defence"} · ${esc(nameOf(b.cid))}</span><q>${esc(b.text)}</q></div>`).join("")||`<p class="src">No arguments were scored.</p>`}</div></div>`}
+ return "";
+}
+function ctrl(){
+ const st=S.state||{phase:"lobby"},c=st.case||0,ph=st.phase;
+ const b=(a,t,p)=>`<button class="cb ${p?"p":""}" data-a="${a}">${t}</button>`;
+ let m=ph!=="lobby"?b("prev","◀ Back"):"";
+ if(ph==="lobby")m+=b("next","Open the court ▶",1);
+ if(ph==="charge")m+=b("next","Recess: file arguments (4 min) ▶",1);
+ if(ph==="args")m+=b("plus","+30 s")+b("next","Close the files ▶",1);
+ if(ph==="dossier")m+=b("next","Prosecution pleads ▶",1);
+ if(ph==="plea")m+=b("plus","+30 s")+b("clear","Clear speaker")+b("next",st.sub==="pros"?"Defence pleads ▶":st.sub==="def"?"Jury question ▶":"Open vote ▶",1);
+ if(ph==="vopen")m+=b("next","Secret ballot ▶",1);
+ if(ph==="vsecret")m+=b("next","Show the votes ▶",1);
+ if(ph==="verdict")m+=!st.rev?b("next","Judgment ▶",1):(c===0?b("appeal","Appeal: Ai Weiwei ▶",1):"")+b("next","Who was the informant? ▶",c!==0);
+ if(ph==="guess")m+=b("next","Unmask ▶",1);
+ return `<div class="ctrl">${m}<span class="sp"></span><span class="small">Space / → = next step</span>${b("reset","Reset session")}</div>`;
+}
+function bindCtrl(){$$(".cb[data-a]").forEach(x=>x.onclick=()=>act(x.dataset.a,x))}
+let resetArm=0;
+async function act(a,el){
+ const st=S.state||{phase:"lobby",case:0},c=st.case||0,u=o=>update(R("state"),o),ph=st.phase;
+ if(a==="next"){
+  if(ph==="lobby"){assignInformants();return u({phase:"charge",case:0,rev:false,sub:null,speaker:null})}
+  if(ph==="charge")return u({phase:"args",endsAt:now()+T_ARGS*1000});
+  if(ph==="args")return u({phase:"dossier"});
+  if(ph==="dossier")return u({phase:"plea",sub:"pros",speaker:null,endsAt:now()+T_PLEA*1000});
+  if(ph==="plea"){if(st.sub==="pros")return u({sub:"def",speaker:null,endsAt:now()+T_PLEA*1000});if(st.sub==="def")return u({sub:"q",speaker:null,endsAt:now()+T_Q*1000});return u({phase:"vopen",sub:null,speaker:null})}
+  if(ph==="vopen")return u({phase:"vsecret"});
+  if(ph==="vsecret")return u({phase:"verdict",rev:false});
+  if(ph==="verdict")return st.rev?u({phase:"guess"}):u({rev:true});
+  if(ph==="guess")return u({phase:"finale"});
+  return;
+ }
+ if(a==="appeal")return u({phase:"charge",case:1,rev:false,sub:null,speaker:null});
+ if(a==="plus")return u({endsAt:Math.max(st.endsAt||0,now())+30000});
+ if(a==="clear")return u({speaker:null});
+ if(a==="prev"){
+  if(ph==="charge")return c===1?u({phase:"verdict",case:0,rev:true}):u({phase:"lobby"});
+  if(ph==="plea"&&st.sub!=="pros")return u({sub:st.sub==="q"?"def":"pros",speaker:null,endsAt:now()+T_PLEA*1000});
+  if(ph==="verdict"&&st.rev)return u({rev:false});
+  if(ph==="vopen")return u({phase:"plea",sub:"q",speaker:null});
+  if(ph==="guess")return u({phase:"verdict",rev:true});
+  const B={args:"charge",dossier:"args",plea:"dossier",vsecret:"vopen",verdict:"vsecret",finale:"guess"};
+  return B[ph]&&u({phase:B[ph]});
+ }
+ if(a==="reset"){
+  if(Date.now()-resetArm>3000){resetArm=Date.now();el.textContent="Click again to wipe everything";return}
+  busyH.clear();return set(R(),{state:{phase:"lobby",case:0}});
+ }
+}
+if(HOST) addEventListener("keydown",e=>{
+ if(/INPUT|TEXTAREA/.test(e.target.tagName))return;
+ const st=S.state||{};
+ if(e.key===" "||e.key==="ArrowRight"){e.preventDefault();if(st.phase!=="finale")act("next")}
+ if(e.key==="ArrowLeft")act("prev");
+});
+setInterval(()=>{const st=S.state||{};$$("[data-end]").forEach(el=>{if(HOST&&!["args","plea"].includes(st.phase))return;const left=(st.endsAt||0)-now();el.textContent=fmt(left);el.classList.toggle("low",left<15000)})},250);
+onValue(R(),s=>{
+ S=s.val()||{};
+ if(!S.state&&HOST) set(R("state"),{phase:"lobby",case:0});
+ try{HOST?renderHost():renderPhone()}catch(e){console.error("[court]",e)}
+},e=>{$("#app").innerHTML=`<div class="ph"><div class="wait"><h2>Connection blocked</h2><p class="note">${esc(e.message)}</p></div></div>`});
+if(HOST) getModel();
+</script>
+</body>
+</html>
