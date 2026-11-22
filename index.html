@@ -100,10 +100,10 @@ details.rc[open] summary{margin-bottom:10px}
 .clock{justify-self:end;align-self:center;width:132px;height:132px;border-radius:50%;background:radial-gradient(circle,#f5ecd8 0 58%,#d9c9a6 59% 62%,var(--brass) 63% 72%,#6b4f1d 73%);display:grid;place-items:center;box-shadow:0 10px 24px #0009}
 .clock span{font-family:"EB Garamond";font-weight:800;font-size:34px;color:#2a1a0c;font-variant-numeric:tabular-nums}
 .clock span.low{color:#b3241c}
-.floor{display:grid;grid-template-columns:1fr .8fr 1fr;grid-template-rows:auto auto;grid-template-areas:"p d f" "j j g";gap:16px 18px;padding:20px 18px 18px;background:repeating-linear-gradient(115deg,#5a3a22 0 22px,#523420 22px 44px);align-content:start}
+.floor{display:grid;grid-template-columns:1fr .8fr 1fr;grid-template-rows:1.3fr 1fr;grid-template-areas:"p d f" "j j g";gap:22px 20px;padding:26px 20px 70px;background:repeating-linear-gradient(115deg,#5a3a22 0 22px,#523420 22px 44px);align-content:stretch}
 .tbl{grid-area:p;border-radius:8px;padding:12px 14px 14px;background:linear-gradient(#7a4c2d,#5a371f);border-top:4px solid #8e5c37;box-shadow:0 12px 0 #2c1b10,0 18px 30px #0008;transition:box-shadow .45s,transform .45s;position:relative}
 .tbl.def{grid-area:f}
-.tbl h3,.jury h3,.gal h3{display:flex;align-items:center;gap:8px;font-family:"EB Garamond";font-size:21px;color:#f3e6cc;margin-bottom:8px}
+.tbl h3,.jury h3,.gal h3{display:flex;align-items:center;gap:8px;font-family:"EB Garamond";font-size:25px;color:#f3e6cc;margin-bottom:8px}
 .tbl h3 .cn,.jury h3 .cn,.gal h3 .cn{font-size:15px;color:#e1c88f;font-weight:600}
 .lamp{width:12px;height:12px;border-radius:50%;background:#3b2a17;box-shadow:inset 0 0 0 2px #6b4f1d;flex:none;transition:background .4s,box-shadow .4s}
 .tbl.pros.lit{box-shadow:0 12px 0 #2c1b10,0 0 0 3px var(--oxg),0 0 80px 18px #ff7a6655;transform:translateY(-4px)}
@@ -113,7 +113,7 @@ details.rc[open] summary{margin-bottom:10px}
 .tbl.work .lamp{animation:blink 1.6s infinite}
 @keyframes blink{50%{background:var(--brass2);box-shadow:0 0 10px 2px var(--brass2)}}
 .seats{display:flex;flex-wrap:wrap;gap:6px}
-.seat{padding:5px 10px;border-radius:5px;background:#00000040;color:#eadcc2;font-weight:600;font-size:14px;transition:all .35s}
+.seat{padding:7px 13px;border-radius:5px;background:#00000040;color:#eadcc2;font-weight:600;font-size:17px;transition:all .35s}
 .seat.speak{color:#1b0c08;font-weight:700;transform:scale(1.06)}
 .tbl.pros .seat.speak{background:var(--oxg);box-shadow:0 0 18px 4px #ff7a6688}
 .tbl.def .seat.speak{background:var(--navg);box-shadow:0 0 18px 4px #86b6ff88}
@@ -121,8 +121,8 @@ details.rc[open] summary{margin-bottom:10px}
 .seat.inf{outline:2px dashed var(--oxg);outline-offset:2px}
 .filed{position:absolute;right:12px;top:12px;font:600 12px Inter;color:#f3e6cc;background:#0005;border-radius:99px;padding:3px 9px}
 .dock{grid-area:d;justify-self:center;align-self:center;display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 16px 10px;border:3px solid var(--brass);border-bottom-width:6px;border-radius:10px 10px 4px 4px;background:#2c1b1066;text-align:center}
-.dock svg{width:64px;height:64px}
-.dock b{font-family:"EB Garamond";font-size:17px;color:#f3e6cc;line-height:1.1}
+.dock svg{width:84px;height:84px}
+.dock b{font-family:"EB Garamond";font-size:22px;color:#f3e6cc;line-height:1.1}
 .dock span{font-size:12px;color:#d9c49b}
 .jury{grid-area:j;border-radius:8px;padding:12px 14px;background:linear-gradient(#5a3a20,#432a16);border:3px solid #8e6a2f;transition:box-shadow .45s}
 .jury.lit{box-shadow:0 0 0 3px var(--jurg),0 0 80px 16px #f0d27a44}
@@ -132,8 +132,8 @@ details.rc[open] summary{margin-bottom:10px}
 .gal .dots{display:flex;flex-wrap:wrap;gap:5px}
 .gal .dots i{width:14px;height:14px;border-radius:50% 50% 30% 30%;background:#8a7054;display:block}
 .gal .names{display:flex;flex-wrap:wrap;gap:6px;font-size:14px;color:#e7d6b6}
-.plate{position:absolute;left:50%;bottom:16px;transform:translateX(-50%) translateY(140%);transition:transform .45s cubic-bezier(.2,.9,.2,1);padding:10px 26px 12px;border-radius:6px;background:linear-gradient(var(--brass2),var(--brass));color:#2a1a0c;text-align:center;box-shadow:0 10px 30px #000a;white-space:nowrap;z-index:3}
-.plate.show{transform:translateX(-50%) translateY(0)}
+.plate{position:absolute;left:50%;bottom:16px;opacity:0;transform:translateX(-50%) translateY(240%);transition:transform .45s cubic-bezier(.2,.9,.2,1),opacity .3s;padding:10px 26px 12px;border-radius:6px;background:linear-gradient(var(--brass2),var(--brass));color:#2a1a0c;text-align:center;box-shadow:0 10px 30px #000a;white-space:nowrap;z-index:3}
+.plate.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .plate small{display:block;font:600 12px Inter;color:#5a4220}
 .plate b{font-family:"EB Garamond";font-size:30px;font-weight:800;line-height:1.05}
 .record{background:var(--paper);color:var(--ink);border-radius:6px;padding:28px 30px;box-shadow:0 30px 60px #000c;position:relative;display:flex;flex-direction:column;gap:14px;overflow:hidden}
@@ -208,14 +208,14 @@ const cache={};
 function setH(id,html){const el=document.getElementById(id);if(!el)return;if(cache[id]===html&&el.dataset.k===view)return;cache[id]=html;el.dataset.k=view;el.innerHTML=html}
 
 const CASES=[
- {title:"The People v. Badiucao",def:"Badiucao",work:"“Xi nursing Putin” (2022)",desc:"A digital painting in the style of a Christian Madonna: Xi Jinping holds and breast-feeds Vladimir Putin like an infant.",
+ {title:"The People v. Badiucao",accused:"Badiucao",work:"“Xi nursing Putin” (2022)",desc:"A digital painting in the style of a Christian Madonna: Xi Jinping holds and breast-feeds Vladimir Putin like an infant.",
   charges:[["Art. 105 (2) PRC Criminal Law","Inciting subversion of state power “by spreading rumours or slanders or any other means” – up to 5 years, more if “grave”."],["Art. 293 PRC Criminal Law","Picking quarrels and provoking trouble – used against online speech since 2013."]],
   pros:["It humiliates the head of state – mocking the leader is an attack on the whole nation.","It distorts China's neutral position on the Ukraine crisis and spreads the rumour that China feeds Russia's war.","Satire is never innocent: images like this are shared to stir people up and are used by foreign forces to smear China."],
   def:["It is a picture, not an act: no violence, no call to action, nobody harmed.","It comments on public facts: during the war China became Russia's most important trading partner.","A confident state can tolerate a cartoon – punishing it proves the artist's point."],
   jury:["Ask the prosecution: who exactly was harmed by this picture?","Ask the defence: is an artist living abroad responsible for consequences inside China?","Judge the arguments, not the volume."],
   reality:"In reality Badiucao lives in Australia. In November 2018 his first solo show in Hong Kong was cancelled one day before opening after threats from Chinese authorities; he says police visited his family in China and questioned a relative for hours.",
   src:"RSF (2018); Reuters (2018); The Intercept (2019)"},
- {title:"Appeal: The People v. Ai Weiwei",def:"Ai Weiwei",work:"Ai Weiwei's work on the war in Ukraine",desc:"The work from our presentation: it shows the suffering caused by the war – without naming a culprit.",
+ {title:"Appeal: The People v. Ai Weiwei",accused:"Ai Weiwei",work:"Ai Weiwei's work on the war in Ukraine",desc:"The work from our presentation: it shows the suffering caused by the war – without naming a culprit.",
   charges:[["Art. 293 PRC Criminal Law","Picking quarrels and provoking trouble – “disrupting public order”, also online."]],
   pros:["The artist has a record: in 2011 he was detained for 81 days. He has worked against China from abroad for years.","By showing only suffering he hides his real target: China's partner Russia.","Western museums use him as a tool to smear China."],
   def:["The work names no one. Since when is compassion a crime?","Showing suffering is a universal human message – it cannot ‘subvert’ anything.","If even this is punished, art itself becomes the crime."],
@@ -423,17 +423,17 @@ function renderHost(){
  const k="h-"+ph+"-"+c+"-"+(st.sub||"")+"-"+(st.rev?1:0)+"-"+IMGS.map(x=>x?1:0).join("");
  mount(k,`<div class="bm"><header class="hdr"><div class="crest">法</div><div><b>模拟法庭 · Mock Trial</b><span>${ph==="lobby"?"Art of Resistance · Pop Culture in China":esc(caseNo(c))+" · "+esc(K.title)}</span></div><div class="sp"></div><span class="small" id="aist">${aiStatus}</span></header>
   <main class="hall ${wide?"wide":""}"><section class="court"><div class="wall"><div class="screen" id="exh">${IMGS[c]&&ph!=="lobby"?`<img alt="${esc(K.work)}" src="${IMGS[c]}">`:`<div class="ex"><i>EXHIBIT A</i>${esc(K.work)}</div>`}</div><div class="bench" id="bench"><div class="emb">法</div><b>Presiding Judge</b><div class="btxt" id="btxt"></div></div><div class="clock"><span id="clk" data-end="1">–</span></div></div>
-  <div class="floor"><div class="tbl pros" id="tP"></div><div class="dock">${CHAIR}<b>${esc(K.def)}</b><span>Defendant · absent</span></div><div class="tbl def" id="tD"></div><div class="jury" id="jb"></div><div class="gal" id="gal"></div></div><div class="plate" id="plate"></div></section>
+  <div class="floor"><div class="tbl pros" id="tP"></div><div class="dock">${CHAIR}<b>${esc(K.accused)}</b><span>Defendant · absent</span></div><div class="tbl def" id="tD"></div><div class="jury" id="jb"></div><div class="gal" id="gal"></div></div><div class="plate" id="plate"></div></section>
   <aside class="record" id="rec"></aside></main>${ctrl()}</div>`,()=>{bindCtrl();if(ph==="lobby"){CASES.forEach((x,i)=>{const f=$("#im"+i);if(f)f.onchange=e=>e.target.files[0]&&loadImg(e.target.files[0],i)})}});
  const ids=r=>Object.keys(P).filter(id=>P[id].role===r).sort((a,b)=>P[a].t-P[b].t);
  const act=activeSides(st),sp=st.speaker;
  const A=argsOf(c);
- const tbl=side=>{const n=A.filter(a=>a.side===side).length;return `<h3><span class="lamp"></span>${side==="pros"?"Prosecution":"Defence"} <span class="cn">${ROLES[side].cn}</span></h3>${ph==="args"?`<span class="filed">${n} filed</span>`:""}<div class="seats">${ids(side).map(id=>`<span class="seat ${sp&&sp.cid===id?"speak":""}">${esc(P[id].name)}</span>`).join("")||`<span class="seat">seats empty</span>`}</div>`};
+ const tbl=side=>{const n=A.filter(a=>a.side===side).length;return `<h3><span class="lamp"></span>${side==="pros"?"Prosecution":"Defence"} <span class="cn">${ROLES[side].cn}</span></h3>${ph==="args"?`<span class="filed">${n} filed</span>`:""}<div class="seats">${ph==="lobby"?`<span class="seat">seats assigned when the court opens</span>`:ids(side).map(id=>`<span class="seat ${sp&&sp.cid===id?"speak":""}">${esc(P[id].name)}</span>`).join("")||`<span class="seat">seats empty</span>`}</div>`};
  setH("tP",tbl("pros"));setH("tD",tbl("def"));
  $("#tP").classList.toggle("lit",act.includes("pros"));$("#tD").classList.toggle("lit",act.includes("def"));
  $("#tP").classList.toggle("work",ph==="args");$("#tD").classList.toggle("work",ph==="args");
  const V=(S.vopen||{})[c]||{};
- setH("jb",`<h3><span class="lamp"></span>Jury <span class="cn">陪审团</span></h3><div class="seats">${ids("jury").map(id=>{const v=["vopen","vsecret","verdict"].includes(ph)?V[id]:undefined;return `<span class="seat ${v===1?"g":v===0?"n":""} ${ph==="finale"&&P[id].inf?"inf":""}">${esc(P[id].name)}${ph==="finale"&&P[id].inf?" · 线人":""}</span>`}).join("")||`<span class="seat">seats empty</span>`}</div>`);
+ setH("jb",`<h3><span class="lamp"></span>Jury <span class="cn">陪审团</span></h3><div class="seats">${ph==="lobby"?`<span class="seat">seats assigned when the court opens</span>`:ids("jury").map(id=>{const v=["vopen","vsecret","verdict"].includes(ph)?V[id]:undefined;return `<span class="seat ${v===1?"g":v===0?"n":""} ${ph==="finale"&&P[id].inf?"inf":""}">${esc(P[id].name)}${ph==="finale"&&P[id].inf?" · 线人":""}</span>`}).join("")||`<span class="seat">seats empty</span>`}</div>`);
  $("#jb").classList.toggle("lit",(ph==="plea"&&st.sub==="q")||["vopen","guess","finale"].includes(ph));
  const all=Object.keys(P);
  setH("gal",ph==="lobby"?`<h3>Public gallery <span class="cn">旁听席</span></h3><div class="names">${all.map(id=>`<span>${esc(P[id].name)}</span>`).join(" · ")||"<span>empty</span>"}</div>`:`<h3>Public gallery <span class="cn">旁听席</span></h3><div class="dots">${all.map(()=>"<i></i>").join("")}</div>`);
