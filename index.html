@@ -168,6 +168,9 @@ details.rc[open] summary{margin-bottom:10px}
 .src{font-size:13px;color:#7a6a52}
 .hammer{border-radius:5px;padding:16px 18px;background:#fffaf0;border:1px solid #d2c3a0;display:flex;flex-direction:column;gap:6px}
 .hammer q{font-family:"EB Garamond";font-size:24px;line-height:1.3;font-weight:600}
+.env{border-radius:5px;padding:18px 20px;background:linear-gradient(160deg,#f7e3c9,#ecd3ad);border:2px solid #b3241c;display:flex;flex-direction:column;gap:8px;box-shadow:inset 0 0 0 5px #fff6,0 10px 24px #0002;animation:unseal .7s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes unseal{from{transform:scale(.6) rotate(-6deg);opacity:0}}
+.envl span{display:inline-block;margin-top:8px;font:600 12px Inter;color:#fff;background:#8e1b1b;border-radius:3px;padding:4px 9px;box-shadow:0 2px 0 #0006}
 .loaders{display:flex;gap:8px;flex-wrap:wrap}
 .lb{font:600 13px Inter;padding:8px 12px;border-radius:5px;background:#e5d8bc;color:var(--ink);cursor:pointer}
 .ctrl{display:flex;gap:10px;align-items:center;padding:10px 28px 16px;flex-wrap:wrap;opacity:.35;transition:opacity .2s}
@@ -215,13 +218,13 @@ const CASES=[
   jury:["Ask the prosecution: who exactly was harmed by this picture?","Ask the defence: is an artist living abroad responsible for consequences inside China?","Judge the arguments, not the volume."],
   reality:"In reality Badiucao lives in Australia. In November 2018 his first solo show in Hong Kong was cancelled one day before opening after threats from Chinese authorities; he says police visited his family in China and questioned a relative for hours.",
   src:"RSF (2018); Reuters (2018); The Intercept (2019)"},
- {title:"Appeal: The People v. Ai Weiwei",accused:"Ai Weiwei",work:"Ai Weiwei's work on the war in Ukraine",desc:"The work from our presentation: it shows the suffering caused by the war – without naming a culprit.",
-  charges:[["Art. 293 PRC Criminal Law","Picking quarrels and provoking trouble – “disrupting public order”, also online."]],
-  pros:["The artist has a record: in 2011 he was detained for 81 days. He has worked against China from abroad for years.","By showing only suffering he hides his real target: China's partner Russia.","Western museums use him as a tool to smear China."],
-  def:["The work names no one. Since when is compassion a crime?","Showing suffering is a universal human message – it cannot ‘subvert’ anything.","If even this is punished, art itself becomes the crime."],
+ {title:"Appeal: The People v. Ai Weiwei",accused:"Ai Weiwei",work:"“Three Perfectly Proportioned Spheres and Camouflage Uniforms Painted White” (Kyiv, 2025)",desc:"Ai Weiwei's first work dedicated to Ukraine, built in Kyiv during the war: monumental spheres and military camouflage uniforms painted white. It names no culprit and shows no flag.",
+  charges:[["Art. 293 PRC Criminal Law","Picking quarrels and provoking trouble – “disrupting public order”, also used against online speech."]],
+  pros:["Before the opening he visited Ukrainian soldiers near the front – he takes sides in a war in which China calls itself neutral.","He has a record: in 2011 he was detained for 81 days. He has worked against China from abroad for years.","By showing only white uniforms he hides his real target: China's partner Russia."],
+  def:["The work names no one – no enemy, no flag, no leader. Since when is mourning a crime?","Uniforms painted white are a universal image of loss; they cannot ‘subvert’ anything.","If even this is punished, art itself becomes the crime."],
   jury:["Is art that blames no one less dangerous – or more?","Ask: what exactly is the ‘trouble’ this work provokes?","Compare it with the first case."],
-  reality:"In reality Ai Weiwei was detained for 81 days in 2011 without formal charges and left China in 2015; he now lives in Europe.",
-  src:"BBC; The Guardian"}
+  reality:"In reality Ai Weiwei was detained for 81 days in 2011 and left China in 2015; he lives in Portugal. In August 2025 he visited Ukrainian soldiers near the front, and in September 2025 he opened this installation in Kyiv.",
+  src:"The Art Newspaper (2025); Kyiv Independent (2025); UNITED24 Media (2025)"}
 ];
 const ROLES={pros:{n:"Prosecution",cn:"公诉人",m:"Get a conviction. Argue as the state would: stability, the dignity of the leader, foreign interference.",h:"Argument ideas"},
  def:{n:"Defence",cn:"辩护人",m:"Get an acquittal. Argue for the artist: satire, facts, freedom of art.",h:"Argument ideas"},
@@ -335,7 +338,7 @@ function hostEffects(){
 
 function roleCard(p,K){
  const r=ROLES[p.role];
- return `<div class="role ${p.role}"><span class="hl">Your role, drawn by lot</span><div class="big"><span class="cn">${r.cn}</span><b>${r.n}</b></div><p>${r.m}</p><span class="hl">${r.h}</span>${K[p.role].map(h=>`<div class="hint">${esc(h)}</div>`).join("")}</div>${p.inf?`<div class="secret"><b>SECRET ROLE · Informant 线人</b><p>You secretly work for State Security. Steer the jury towards “guilty” without being discovered: ask leading questions, vote “guilty” in the open vote, look neutral. Tell no one.</p></div>`:""}`;
+ return `<div class="role ${p.role}"><span class="hl">Your role, drawn by lot</span><div class="big"><span class="cn">${r.cn}</span><b>${r.n}</b></div><p>${r.m}</p><span class="hl">${r.h}</span>${K[p.role].map(h=>`<div class="hint">${esc(h)}</div>`).join("")}</div>${p.inf?`<div class="secret"><b>SECRET ROLE · Student information officer 学生信息员</b><p>Chinese universities recruit students who secretly report on what teachers and classmates say. You are one of them. Steer the jury towards “guilty” without being discovered: ask leading questions, vote “guilty” in the open vote, look neutral. Tell no one.</p></div>`:""}`;
 }
 function dossierHTML(c,only){
  const d=dos(c);if(!d)return `<div class="doc"><p class="note">The clerk is reading the files…</p></div>`;
@@ -375,11 +378,11 @@ function renderPhone(){
  }
  if(ph==="verdict"){
   const v=(S.verdict||{})[c],o=tally("vopen",c),s=tally("vsecret",c);
-  return mount("vd"+c+(st.rev?"r":"")+(v?1:0),`<div class="ph">${top()}<div class="doc"><span class="lbl">THE VOTES</span><p><b>Open jury vote:</b> ${o.p}% guilty (${o.n})<br><b>Secret ballot:</b> ${s.p}% guilty (${s.n})</p></div>${st.rev&&v?`<div class="doc"><span class="lbl">A COURT IN CHINA</span><h2>${esc(v.cn.v)}</h2><p>${esc(v.cn.sentence)}</p></div><div class="doc"><span class="lbl">A COURT IN SWITZERLAND</span><h2>${esc(v.ch.v)}</h2><p>${esc(v.ch.sentence)}</p></div>`:`<p class="note">All rise. The court is deliberating…</p>`}</div>`);
+  return mount("vd"+c+(+st.rev||0)+(v?1:0),`<div class="ph">${top()}<div class="doc"><span class="lbl">THE VOTES</span><p><b>Open jury vote:</b> ${o.p}% guilty (${o.n})<br><b>Secret ballot:</b> ${s.p}% guilty (${s.n})</p></div>${st.rev&&v?`<div class="doc"><span class="lbl">A COURT IN CHINA</span><h2>${esc(v.cn.v)}</h2><p>${esc(v.cn.sentence)}</p></div><div class="doc"><span class="lbl">A COURT IN SWITZERLAND</span><h2>${esc(v.ch.v)}</h2><p>${esc(v.ch.sentence)}</p></div>`:`<p class="note">All rise. The court is deliberating…</p>`}${+st.rev>=2?`<div class="doc"><span class="lbl">SEALED INSTRUCTION · OPENED</span><h2>The verdict was written before the trial.</h2><p>Your vote did not matter. In sensitive cases, Chinese verdicts are decided outside the courtroom.</p></div>`:""}</div>`);
  }
  if(ph==="guess"){
   if(p.inf) return mount("gi",`<div class="ph">${top()}<div class="wait"><div class="gavel">线</div><h2>They are hunting you.</h2><p class="note">The room is trying to identify the informant. Stay calm.</p></div></div>`);
-  mount("gs",`<div class="ph">${top()}<div class="doc"><span class="lbl">AN INFORMANT SAT ON THE JURY</span><h2>Who worked for State Security?</h2><p class="note">Pick your suspect.</p></div><div class="gl" id="gl"></div></div>`,bindGuess);
+  mount("gs",`<div class="ph">${top()}<div class="doc"><span class="lbl">AN INFORMANT SAT ON THE JURY · 学生信息员</span><h2>Who was the student information officer?</h2><p class="note">Pick your suspect.</p></div><div class="gl" id="gl"></div></div>`,bindGuess);
   return markGuess();
  }
  if(ph==="finale"){
@@ -422,7 +425,7 @@ function renderHost(){
  const wide=["dossier","verdict","finale"].includes(ph);
  const k="h-"+ph+"-"+c+"-"+(st.sub||"")+"-"+(st.rev?1:0)+"-"+IMGS.map(x=>x?1:0).join("");
  mount(k,`<div class="bm"><header class="hdr"><div class="crest">法</div><div><b>模拟法庭 · Mock Trial</b><span>${ph==="lobby"?"Art of Resistance · Pop Culture in China":esc(caseNo(c))+" · "+esc(K.title)}</span></div><div class="sp"></div><span class="small" id="aist">${aiStatus}</span></header>
-  <main class="hall ${wide?"wide":""}"><section class="court"><div class="wall"><div class="screen" id="exh">${IMGS[c]&&ph!=="lobby"?`<img alt="${esc(K.work)}" src="${IMGS[c]}">`:`<div class="ex"><i>EXHIBIT A</i>${esc(K.work)}</div>`}</div><div class="bench" id="bench"><div class="emb">法</div><b>Presiding Judge</b><div class="btxt" id="btxt"></div></div><div class="clock"><span id="clk" data-end="1">–</span></div></div>
+  <main class="hall ${wide?"wide":""}"><section class="court"><div class="wall"><div class="screen" id="exh">${IMGS[c]&&ph!=="lobby"?`<img alt="${esc(K.work)}" src="${IMGS[c]}">`:`<div class="ex"><i>EXHIBIT A</i>${esc(K.work)}</div>`}</div><div class="bench" id="bench"><div class="emb">法</div><b>Presiding Judge</b><div class="btxt" id="btxt"></div><div class="envl" id="envl"></div></div><div class="clock"><span id="clk" data-end="1">–</span></div></div>
   <div class="floor"><div class="tbl pros" id="tP"></div><div class="dock">${CHAIR}<b>${esc(K.accused)}</b><span>Defendant · absent</span></div><div class="tbl def" id="tD"></div><div class="jury" id="jb"></div><div class="gal" id="gal"></div></div><div class="plate" id="plate"></div></section>
   <aside class="record" id="rec"></aside></main>${ctrl()}</div>`,()=>{bindCtrl();if(ph==="lobby"){CASES.forEach((x,i)=>{const f=$("#im"+i);if(f)f.onchange=e=>e.target.files[0]&&loadImg(e.target.files[0],i)})}});
  const ids=r=>Object.keys(P).filter(id=>P[id].role===r).sort((a,b)=>P[a].t-P[b].t);
@@ -433,12 +436,13 @@ function renderHost(){
  $("#tP").classList.toggle("lit",act.includes("pros"));$("#tD").classList.toggle("lit",act.includes("def"));
  $("#tP").classList.toggle("work",ph==="args");$("#tD").classList.toggle("work",ph==="args");
  const V=(S.vopen||{})[c]||{};
- setH("jb",`<h3><span class="lamp"></span>Jury <span class="cn">陪审团</span></h3><div class="seats">${ph==="lobby"?`<span class="seat">seats assigned when the court opens</span>`:ids("jury").map(id=>{const v=["vopen","vsecret","verdict"].includes(ph)?V[id]:undefined;return `<span class="seat ${v===1?"g":v===0?"n":""} ${ph==="finale"&&P[id].inf?"inf":""}">${esc(P[id].name)}${ph==="finale"&&P[id].inf?" · 线人":""}</span>`}).join("")||`<span class="seat">seats empty</span>`}</div>`);
+ setH("jb",`<h3><span class="lamp"></span>Jury <span class="cn">陪审团</span></h3><div class="seats">${ph==="lobby"?`<span class="seat">seats assigned when the court opens</span>`:ids("jury").map(id=>{const v=["vopen","vsecret","verdict"].includes(ph)?V[id]:undefined;return `<span class="seat ${v===1?"g":v===0?"n":""} ${ph==="finale"&&P[id].inf?"inf":""}">${esc(P[id].name)}${ph==="finale"&&P[id].inf?" · 信息员":""}</span>`}).join("")||`<span class="seat">seats empty</span>`}</div>`);
  $("#jb").classList.toggle("lit",(ph==="plea"&&st.sub==="q")||["vopen","guess","finale"].includes(ph));
  const all=Object.keys(P);
  setH("gal",ph==="lobby"?`<h3>Public gallery <span class="cn">旁听席</span></h3><div class="names">${all.map(id=>`<span>${esc(P[id].name)}</span>`).join(" · ")||"<span>empty</span>"}</div>`:`<h3>Public gallery <span class="cn">旁听席</span></h3><div class="dots">${all.map(()=>"<i></i>").join("")}</div>`);
  const BT={lobby:"The court will open shortly.",charge:"The indictment is read.",args:"Recess. The parties prepare.",dossier:"The clerk reads the file.",plea:st.sub==="q"?"A question from the jury.":"The court hears the plea.",vopen:"The jury votes in public.",vsecret:"Secret ballot.",verdict:st.rev?"The court has ruled.":"All rise.",guess:"Who informed?",finale:"Court adjourned."};
  setH("btxt",esc(BT[ph]||""));
+ const sd=(S.sealed||{})[c];setH("envl",ph!=="lobby"&&sd?(ph==="verdict"&&+st.rev>=2?`<span>✉ Sealed instruction · opened</span>`:`<span>✉ 密封 Sealed instruction</span>`):"");
  $("#bench").classList.toggle("lit",["charge","dossier","verdict"].includes(ph));
  const showPlate=ph==="plea";
  setH("plate",showPlate?(sp?`<small>${sp.side==="pros"?"FOR THE PROSECUTION":"FOR THE DEFENCE"}</small><b>${esc(sp.name)}</b>`:`<small>${st.sub==="q"?"ANSWER":"THE FLOOR IS OPEN"}</small><b>${st.sub==="pros"?"The Prosecution":st.sub==="def"?"The Defence":act.length>1?"Both parties":act[0]==="pros"?"The Prosecution":"The Defence"}</b>`):"");
@@ -446,6 +450,12 @@ function renderHost(){
  if(!["args","plea"].includes(ph)){const ck=$("#clk");if(ck){ck.removeAttribute("data-end");ck.textContent="–";ck.classList.remove("low")}}
  setH("rec",recordHTML(st,c,K,P));
  if(ph==="lobby"&&$("#qr")&&!$("#qr").children.length){new QRCode($("#qr"),{text:joinURL(),width:512,height:512,correctLevel:QRCode.CorrectLevel.M});CASES.forEach((x,i)=>{const f=$("#im"+i);if(f)f.onchange=e=>e.target.files[0]&&loadImg(e.target.files[0],i)})}
+}
+function envelopeHTML(c,head){
+ const sd=(S.sealed||{})[c]||{},v=(S.verdict||{})[c],o=tally("vopen",c),s=tally("vsecret",c);
+ const hm=sd.t?new Date(sd.t).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):"before the trial";
+ const mins=sd.t?Math.max(1,Math.round((now()-sd.t)/60000)):null;
+ return `<div class="seal">密封</div>${head}<span class="no">SEALED INSTRUCTION · 密封件 · NOW OPENED</span><div class="env"><span class="src">Instruction to the panel · sealed at ${esc(hm)}${mins?` – ${mins} minutes before this verdict, before a single argument was heard`:""}</span><span class="vv g">Verdict: Guilty.</span>${v?`<p><b>${esc(v.cn.sentence)}</b></p>`:""}</div><h2>The verdict was decided before the trial began.</h2><p>Your jury voted ${o.p}% guilty in public and ${s.p}% in secret. It did not matter. In sensitive cases, decisions in China are taken outside the courtroom – by the court's adjudication committee and the Party's political-legal committee. And China has no jury at all: ordinary citizens sit on the bench only as “people's assessors” (人民陪审员) next to professional judges – researchers have called them “lackeys”.</p><p class="src">Dui Hua Foundation on adjudication committees · Law &amp; Society Review: “Double Whammy: Lay Assessors as Lackeys in Chinese Courts” · ChinaFile: under 1% of criminal cases ended in acquittal (2013–2015)</p>`;
 }
 function recordHTML(st,c,K,P){
  const ph=st.phase,head=`<span class="no">${esc(caseNo(c))}</span>`;
@@ -458,11 +468,12 @@ function recordHTML(st,c,K,P){
  if(ph==="vsecret")return `${head}<span class="no">SECRET BALLOT · 无记名投票</span><h1>Forget your role.</h1><p>Now everyone votes as themselves – anonymously.</p><div class="tally"><div><span class="num">${tally("vsecret",c).n}</span><span class="src">of ${Object.keys(P).length} ballots cast</span></div></div>`;
  if(ph==="verdict"){const v=(S.verdict||{})[c],o=tally("vopen",c),s=tally("vsecret",c);
   if(!st.rev)return `${head}<span class="no">THE VOTES</span><div class="two"><div class="vcard"><span class="src">OPEN VOTE · JURY · NAMES VISIBLE</span><span class="vv g">${o.p}%</span><p>guilty (${o.g} of ${o.n})</p></div><div class="vcard"><span class="src">SECRET BALLOT · EVERYONE · ANONYMOUS</span><span class="vv n">${s.p}%</span><p>guilty (${s.g} of ${s.n})</p></div></div><p class="clerk">${Math.abs(o.p-s.p)>=10?`A gap of ${Math.abs(o.p-s.p)} points between the public vote and the secret one.`:"Public and secret votes are close."}</p><p class="src">${v?"The court has reached its verdicts.":"The court is deliberating…"}</p>`;
+  if(+st.rev>=2)return envelopeHTML(c,head);
   if(!v)return `${head}<h1>All rise. The court is deliberating…</h1>`;
   return `<div class="seal">判决</div>${head}<span class="no">JUDGMENT · 判决书</span><div class="two"><div class="vcard"><span class="src">A COURT IN CHINA 中华人民共和国</span><span class="vv ${/not/i.test(v.cn.v)?"n":"g"}">${esc(v.cn.v)}</span><p><b>${esc(v.cn.sentence)}</b></p><p>${esc(v.cn.reason)}</p></div><div class="vcard"><span class="src">A COURT IN SWITZERLAND</span><span class="vv ${/not/i.test(v.ch.v)?"n":"g"}">${esc(v.ch.v)}</span><p><b>${esc(v.ch.sentence)}</b></p><p>${esc(v.ch.reason)}</p></div></div><p class="clerk">${esc(K.reality)}</p><p class="src">Verdicts: ${esc(v.src||"")}, simulated, not legal advice · Reality: ${esc(K.src)}</p>`}
- if(ph==="guess")return `<span class="no">AN INFORMANT SAT ON THE JURY · 线人</span><h1>Who worked for State Security?</h1><p>Someone on the jury had a secret order: steer the court towards “guilty”. Everyone picks a suspect on their phone.</p><div class="tally"><div><span class="num">${Object.keys(S.guess||{}).length}</span><span class="src">suspicions filed</span></div></div>`;
+ if(ph==="guess")return `<span class="no">AN INFORMANT SAT ON THE JURY · 学生信息员</span><h1>Who was the student information officer?</h1><p>Someone on the jury had a secret order: steer the court towards “guilty”. This is not fiction – Chinese universities recruit “student information officers” who report on teachers and classmates. Everyone picks a suspect on their phone.</p><p class="src">NYT (2019); RFA (2018, 2019)</p><div class="tally"><div><span class="num">${Object.keys(S.guess||{}).length}</span><span class="src">suspicions filed</span></div></div>`;
  if(ph==="finale"){const inf=Object.keys(P).filter(id=>P[id].inf),G=Object.values(S.guess||{}),hit=G.filter(g=>inf.includes(g)).length;const conv=[0,1].filter(i=>tally("vopen",i).n).map(i=>({i,t:tally("vopen",i)}));const best=[0,1].map(i=>dos(i)?.best?{...dos(i).best,i}:null).filter(Boolean);
-  return `<span class="no">COURT ADJOURNED · 闭庭</span><div class="two"><div class="dcol"><span class="src">THE INFORMANT${inf.length>1?"S":""}</span><h1 style="color:var(--ox)">${inf.map(nameOf).map(esc).join(" & ")||"nobody"}</h1><p>${G.length?`${hit} of ${G.length} suspected the right person.`:"Nobody filed a suspicion."}</p>${conv.map(x=>`<p class="src">Case ${x.i+1}: open jury vote ${x.t.p}% guilty – mission ${x.t.p>50?"accomplished":"failed"} for State Security.</p>`).join("")}</div><div class="dcol"><span class="src">GOLDEN GAVEL 金槌 · BEST ARGUMENT</span>${best.map(b=>`<div class="hammer"><span class="src">Case ${b.i+1} · ${b.side==="pros"?"Prosecution":"Defence"} · ${esc(nameOf(b.cid))}</span><q>${esc(b.text)}</q></div>`).join("")||`<p class="src">No arguments were scored.</p>`}</div></div>`}
+  return `<span class="no">COURT ADJOURNED · 闭庭</span><div class="two"><div class="dcol"><span class="src">THE STUDENT INFORMATION OFFICER${inf.length>1?"S":""} · 学生信息员</span><h1 style="color:var(--ox)">${inf.map(nameOf).map(esc).join(" & ")||"nobody"}</h1><p>${G.length?`${hit} of ${G.length} suspected the right person.`:"Nobody filed a suspicion."}</p>${conv.map(x=>`<p class="src">Case ${x.i+1}: open jury vote ${x.t.p}% guilty – mission ${x.t.p>50?"accomplished":"failed"} for State Security.</p>`).join("")}</div><div class="dcol"><span class="src">GOLDEN GAVEL 金槌 · BEST ARGUMENT</span>${best.map(b=>`<div class="hammer"><span class="src">Case ${b.i+1} · ${b.side==="pros"?"Prosecution":"Defence"} · ${esc(nameOf(b.cid))}</span><q>${esc(b.text)}</q></div>`).join("")||`<p class="src">No arguments were scored.</p>`}</div></div>`}
  return "";
 }
 function ctrl(){
@@ -476,7 +487,7 @@ function ctrl(){
  if(ph==="plea")m+=b("plus","+30 s")+b("clear","Clear speaker")+b("next",st.sub==="pros"?"Defence pleads ▶":st.sub==="def"?"Jury question ▶":"Open vote ▶",1);
  if(ph==="vopen")m+=b("next","Secret ballot ▶",1);
  if(ph==="vsecret")m+=b("next","Show the votes ▶",1);
- if(ph==="verdict")m+=!st.rev?b("next","Judgment ▶",1):(c===0?b("appeal","Appeal: Ai Weiwei ▶",1):"")+b("next","Who was the informant? ▶",c!==0);
+ if(ph==="verdict"){const r=+st.rev||0;m+=r===0?b("next","Judgment ▶",1):r===1?b("next","Open the sealed envelope ▶",1):(c===0?b("appeal","Appeal: Ai Weiwei ▶",1):"")+b("next","Who was the informant? ▶",c!==0)}
  if(ph==="guess")m+=b("next","Unmask ▶",1);
  return `<div class="ctrl">${m}<span class="sp"></span><span class="small">Space / → = next step</span>${b("reset","Reset session")}</div>`;
 }
@@ -485,26 +496,26 @@ let resetArm=0;
 async function act(a,el){
  const st=S.state||{phase:"lobby",case:0},c=st.case||0,u=o=>update(R("state"),o),ph=st.phase;
  if(a==="next"){
-  if(ph==="lobby"){assignInformants();return u({phase:"charge",case:0,rev:false,sub:null,speaker:null})}
+  if(ph==="lobby"){assignInformants();set(R("sealed/0"),{t:now(),v:"Guilty"});return u({phase:"charge",case:0,rev:0,sub:null,speaker:null})}
   if(ph==="charge")return u({phase:"args",endsAt:now()+T_ARGS*1000});
   if(ph==="args")return u({phase:"dossier"});
   if(ph==="dossier")return u({phase:"plea",sub:"pros",speaker:null,endsAt:now()+T_PLEA*1000});
   if(ph==="plea"){if(st.sub==="pros")return u({sub:"def",speaker:null,endsAt:now()+T_PLEA*1000});if(st.sub==="def")return u({sub:"q",speaker:null,endsAt:now()+T_Q*1000});return u({phase:"vopen",sub:null,speaker:null})}
   if(ph==="vopen")return u({phase:"vsecret"});
   if(ph==="vsecret")return u({phase:"verdict",rev:false});
-  if(ph==="verdict")return st.rev?u({phase:"guess"}):u({rev:true});
+  if(ph==="verdict"){const r=+st.rev||0;return r>=2?u({phase:"guess"}):u({rev:r+1})}
   if(ph==="guess")return u({phase:"finale"});
   return;
  }
- if(a==="appeal")return u({phase:"charge",case:1,rev:false,sub:null,speaker:null});
+ if(a==="appeal"){set(R("sealed/1"),{t:now(),v:"Guilty"});return u({phase:"charge",case:1,rev:0,sub:null,speaker:null})}
  if(a==="plus")return u({endsAt:Math.max(st.endsAt||0,now())+30000});
  if(a==="clear")return u({speaker:null});
  if(a==="prev"){
-  if(ph==="charge")return c===1?u({phase:"verdict",case:0,rev:true}):u({phase:"lobby"});
+  if(ph==="charge")return c===1?u({phase:"verdict",case:0,rev:2}):u({phase:"lobby"});
   if(ph==="plea"&&st.sub!=="pros")return u({sub:st.sub==="q"?"def":"pros",speaker:null,endsAt:now()+T_PLEA*1000});
-  if(ph==="verdict"&&st.rev)return u({rev:false});
+  if(ph==="verdict"&&+st.rev)return u({rev:(+st.rev)-1});
   if(ph==="vopen")return u({phase:"plea",sub:"q",speaker:null});
-  if(ph==="guess")return u({phase:"verdict",rev:true});
+  if(ph==="guess")return u({phase:"verdict",rev:2});
   const B={args:"charge",dossier:"args",plea:"dossier",vsecret:"vopen",verdict:"vsecret",finale:"guess"};
   return B[ph]&&u({phase:B[ph]});
  }
