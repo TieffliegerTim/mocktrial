@@ -144,6 +144,7 @@ details.rc[open] summary{margin-bottom:10px}
 .record p{font-size:18px;line-height:1.45}
 .record .seal{width:92px;height:92px;font-size:19px;right:24px;top:20px}
 .chg{border-top:1px solid #d2c3a0;padding-top:10px}
+.defd{display:flex;gap:16px;align-items:center;margin:4px 0 6px}.defd img{width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid #d2c3a0;flex:none}.defd div{font-size:16px;color:#4d4232;line-height:1.35}.defd b{display:block;font-family:"EB Garamond";font-size:21px;color:#1a1a1a}
 .chg b{display:block;font-family:"EB Garamond";font-size:21px}
 .chg span{font-size:16px;color:#4d4232}
 .qr{align-self:center;background:#fff;padding:14px;border-radius:6px;box-shadow:0 0 0 1px #c9b994}
@@ -203,7 +204,7 @@ const db=getDatabase(app);
 const ROOM="rooms/court", R=p=>ref(db,ROOM+(p?"/"+p:""));
 const HOST=new URLSearchParams(location.search).has("beamer");
 // Durations in seconds – change here if needed
-const T_PREP=180, T_OPEN=90, T_CLOSE=60;
+const T_PREP=360, T_OPEN=90, T_CLOSE=60;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
@@ -229,10 +230,7 @@ const K={title:"The People v. Badiucao",caseNo:"(2026) Mock Crim. No. 001",accus
 const ROLES={pros:{n:"Prosecution",cn:"公诉人",m:"Get a conviction. Argue as the state would: stability, the dignity of the leader, foreign interference.",h:"Argument ideas"},
  def:{n:"Defence",cn:"辩护人",m:"Get an acquittal. Argue for the artist: satire, facts, freedom of art.",h:"Argument ideas"},
  jury:{n:"Jury",cn:"陪审员",m:"Listen to both sides and decide. At the end you vote – in secret. Nobody will see your vote.",h:"Ask yourself"}};
-const FOLLOW=[
- ["Hidden transcript","You voted in secret. Would you have voted the same way with your name on the screen?"],
- ["Audience","If the court can never be convinced – who is Badiucao's art really talking to?"],
- ["Two strategies","Badiucao: anonymous, from exile. Ai Weiwei: his own name and face – 81 days in detention (2011). Which form of resistance reaches more people, and at what cost?"]];
+const FOLLOW=[];
 const PHASES=["lobby","charge","prep","open","debate","close","vote","verdict","reveal","discuss"];
 const me=()=>(S.players||{})[cid];
 const vote=()=>{const v=Object.values(S.vote||{});const g=v.filter(x=>x===1).length;return {n:v.length,g,ng:v.length-g}};
@@ -283,7 +281,7 @@ function renderPhone(){
  }
  if(ph==="verdict"){const v=vote();return mount("verdict"+v.n,`<div class="ph">${top()}<div class="doc"><div class="seal">判决</div><span class="lbl">JUDGMENT · 判决书</span><h1 style="color:var(--ox)">Guilty.</h1><p>The jury voted ${v.g} guilty, ${v.ng} not guilty.</p></div></div>`)}
  if(ph==="reveal") return mount("reveal",`<div class="ph">${top()}<div class="doc"><span class="lbl">SEALED INSTRUCTION · OPENED</span><h2>The verdict was written before the trial.</h2><p>Your vote did not matter. In sensitive cases, Chinese verdicts are decided outside the courtroom – and China has no jury at all.</p></div></div>`);
- if(ph==="discuss"){const n=+st.fq||0;return mount("discuss"+n,`<div class="ph">${top()}<div class="doc"><span class="lbl">FINAL DISCUSSION · 结语</span><h2>The verdict was written before the trial. So what is resistance art for?</h2>${FOLLOW.slice(0,n).map(f=>`<p><b>${esc(f[0])}:</b> ${esc(f[1])}</p>`).join("")}</div><p class="note">Art of Resistance · Pop Culture in China · HSG. All data is deleted after the session.</p></div>`)}
+ if(ph==="discuss"){const n=+st.fq||0;return mount("discuss"+n,`<div class="ph">${top()}<div class="doc"><span class="lbl">FINAL DISCUSSION · 结语</span><h2>Nobody in China will ever see this picture. So what does the art of resistance actually achieve?</h2>${FOLLOW.slice(0,n).map(f=>`<p><b>${esc(f[0])}:</b> ${esc(f[1])}</p>`).join("")}</div><p class="note">Art of Resistance · Pop Culture in China · HSG. All data is deleted after the session.</p></div>`)}
 }
 function joinHTML(){
  const nm=store.get("mt_name")||"";
@@ -295,7 +293,7 @@ function bindJoin(){
 }
 
 // ---------------- BEAMER ----------------
-let IMG=store.get("mt_img0");
+let IMG=store.get("mt_img0")||"exhibit.jpg";
 function loadImg(file){const im=new Image();im.onload=()=>{const s=Math.min(1,1400/Math.max(im.width,im.height));const cv=document.createElement("canvas");cv.width=Math.round(im.width*s);cv.height=Math.round(im.height*s);cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);IMG=cv.toDataURL("image/jpeg",.82);store.set("mt_img0",IMG);view="";renderHost();toast("Exhibit loaded")};im.src=URL.createObjectURL(file)}
 const joinURL=()=>location.origin+location.pathname;
 const CHAIR=`<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M18 6h28v26H18z" fill="#5a371f" stroke="#c9a45c" stroke-width="2"/><path d="M14 32h36v6H14z" fill="#7a4c2d" stroke="#c9a45c" stroke-width="2"/><path d="M17 38v20M47 38v20M21 38v14M43 38v14" stroke="#c9a45c" stroke-width="3" stroke-linecap="round"/></svg>`;
@@ -333,7 +331,7 @@ function phaseLabel(st){const i=PHASES.indexOf(st.phase);return i>0?`Step ${i} o
 function recordHTML(st,P){
  const ph=st.phase,head=`<span class="no">${esc(K.caseNo)}</span>`;
  if(ph==="lobby"){const n={pros:0,def:0,jury:0};Object.values(P).forEach(p=>p.role&&n[p.role]++);return `<div class="seal">模拟<br>法庭</div><span class="no">SUMMONS · 传票</span><h1>All rise.<br>Scan to enter.</h1><p>You receive a role – prosecution, defence or jury – and argue your role, not your own opinion.</p><div class="qr" id="qr"></div><div class="url">${esc(joinURL().replace(/^https?:\/\//,""))}</div><p class="src">${Object.keys(P).length} in court</p><div class="loaders"><label class="lb" for="im0">${IMG?"✓ ":""}Exhibit A: load image<input id="im0" type="file" accept="image/*" hidden></label></div>`}
- if(ph==="charge") return `<div class="seal">人民<br>法院</div>${head}<span class="no">INDICTMENT · 起诉书</span><h1>${esc(K.title)}</h1><p><b>Exhibit A:</b> ${esc(K.work)}. ${esc(K.desc)}</p>${K.charges.map(x=>`<div class="chg"><b>${esc(x[0])}</b><span>${esc(x[1])}</span></div>`).join("")}<p class="src">Your role is on your phone.</p>`;
+ if(ph==="charge") return `<div class="seal">人民<br>法院</div>${head}<span class="no">INDICTMENT · 起诉书</span><h1>${esc(K.title)}</h1><div class="defd"><img src="badiucao.jpg" alt="Badiucao"><div><b>The defendant</b>Badiucao (巴丢草), political cartoonist, born 1986 in Shanghai, lives in exile in Melbourne.</div></div><p><b>Exhibit A:</b> ${esc(K.work)}. ${esc(K.desc)}</p>${K.charges.map(x=>`<div class="chg"><b>${esc(x[0])}</b><span>${esc(x[1])}</span></div>`).join("")}<p class="src">Your role is on your phone.</p>`;
  if(ph==="prep") return `${head}<span class="no">RECESS · 准备 · ${T_PREP/60} MINUTES</span><h1>The parties prepare.</h1><p><b>Prosecution and defence:</b> agree on your speakers and your three strongest points. Argument ideas are on your phones.</p><p><b>Jury:</b> decide what would convince you. You vote at the end – in secret.</p>`;
  if(ph==="open"||ph==="close"){const s=st.sub||"pros",T=ph==="open"?T_OPEN:T_CLOSE;return `${head}<span class="no">${ph==="open"?"OPENING STATEMENT · 开庭陈述":"CLOSING STATEMENT · 最后陈述"} · ${T} SECONDS</span><h1>${s==="pros"?"The prosecution":"The defence"} has the floor.</h1><p>${ph==="open"?(s==="pros"?"Why must the artist be convicted?":"Why must the artist be acquitted?"):"Last words to the jury – sum up your strongest point."}</p>${ph==="open"&&s==="pros"?K.charges.map(x=>`<div class="chg"><b>${esc(x[0])}</b><span>${esc(x[1])}</span></div>`).join(""):""}`}
  if(ph==="debate") return `${head}<span class="no">OPEN DEBATE · 法庭辩论 · NO TIME LIMIT</span><h1>Prosecution and defence debate.</h1><p>Answer each other directly. Tap “Take the floor” on your phone so your name lights up. The presiding judge closes the debate.</p><p class="src">Jury: listen – your vote comes at the end.</p>`;
@@ -341,7 +339,7 @@ function recordHTML(st,P){
  if(ph==="verdict"){const v=vote();return `<div class="seal">判决</div>${head}<span class="no">JUDGMENT · 判决书</span><span class="verdict">GUILTY.</span><p><b>The jury voted ${v.g} guilty, ${v.ng} not guilty.</b> ${v.n&&v.g<=v.ng?"The jury acquitted – the court convicts anyway.":"The court convicts."}</p><div class="chg"><b>Sentence (if tried in China)</b><span>Imprisonment under Art. 105 (2) PRC Criminal Law – inciting subversion of state power, up to 5 years.</span></div>`}
  if(ph==="reveal"){const v=vote(),sd=S.sealed||{};const hm=sd.t?new Date(sd.t).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):"";const mins=sd.t?Math.max(1,Math.round((now()-sd.t)/60000)):null;
   return `<div class="seal">密封</div>${head}<span class="no">SEALED INSTRUCTION · 密封件 · NOW OPENED</span><div class="env"><span class="src">Instruction to the court${hm?` · sealed at ${esc(hm)} – ${mins} minutes ago, before a single argument was heard`:""}</span><span class="vv g">Verdict: Guilty.</span></div><h2>The verdict was decided before the trial began.</h2><p>${v.n?(v.g<=v.ng?`Your jury acquitted (${v.g} guilty, ${v.ng} not guilty). It did not matter.`:`Your jury voted ${v.g} to ${v.ng} for guilty – but had it acquitted, nothing would have changed.`):"Your vote would not have mattered."} In sensitive cases, decisions in China are taken outside the courtroom – by the court's adjudication committee and the Party's political-legal committee. Under 1% of criminal cases end in acquittal. And China has no jury at all: citizens sit only as “people's assessors” (人民陪审员) next to professional judges – researchers have called them “lackeys”.</p><p class="clerk">${esc(K.reality)}</p><p class="src">Dui Hua Foundation (adjudication committees) · ChinaFile (acquittals 2013–2015) · Law &amp; Society Review: “Lay Assessors as Lackeys in Chinese Courts” · ${esc(K.realitySrc)}</p>`}
- if(ph==="discuss"){const n=+st.fq||0;return `<span class="no">FINAL DISCUSSION · 结语 · EVERYONE</span><h1>The verdict was written before the trial.<br>So what is resistance art for?</h1><div class="fq">${FOLLOW.slice(0,n).map(f=>`<div><b>${esc(f[0])}</b>${esc(f[1])}</div>`).join("")}</div><p class="src">James C. Scott (1990): Domination and the Arts of Resistance – Hidden Transcripts. Yale University Press.</p>`}
+ if(ph==="discuss"){const n=+st.fq||0;return `<span class="no">FINAL DISCUSSION · 结语 · EVERYONE</span><h1>Nobody in China will ever see this picture.<br>So what does the art of resistance actually achieve?</h1><div class="fq">${FOLLOW.slice(0,n).map(f=>`<div><b>${esc(f[0])}</b>${esc(f[1])}</div>`).join("")}</div><p class="src">James C. Scott (1990): Domination and the Arts of Resistance – Hidden Transcripts. Yale University Press.</p>`}
  return "";
 }
 function ctrl(st){
