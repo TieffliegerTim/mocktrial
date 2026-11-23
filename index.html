@@ -293,7 +293,7 @@ function bindJoin(){
 }
 
 // ---------------- BEAMER ----------------
-let IMG=store.get("mt_img0")||"exhibit.jpg";
+let IMG="image.png";
 function loadImg(file){const im=new Image();im.onload=()=>{const s=Math.min(1,1400/Math.max(im.width,im.height));const cv=document.createElement("canvas");cv.width=Math.round(im.width*s);cv.height=Math.round(im.height*s);cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);IMG=cv.toDataURL("image/jpeg",.82);store.set("mt_img0",IMG);view="";renderHost();toast("Exhibit loaded")};im.src=URL.createObjectURL(file)}
 const joinURL=()=>location.origin+location.pathname;
 const CHAIR=`<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M18 6h28v26H18z" fill="#5a371f" stroke="#c9a45c" stroke-width="2"/><path d="M14 32h36v6H14z" fill="#7a4c2d" stroke="#c9a45c" stroke-width="2"/><path d="M17 38v20M47 38v20M21 38v14M43 38v14" stroke="#c9a45c" stroke-width="3" stroke-linecap="round"/></svg>`;
